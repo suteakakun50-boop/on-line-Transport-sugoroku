@@ -108,6 +108,10 @@
   @media (max-width: 480px){
     .sq{ width:56px; height:56px; }
     .token{ width:20px; height:20px; }
+    .token.star{ width:26px; height:26px; }
+    .pt-sub{ font-size:28px; }
+    .winner-overlay .pt-label{ font-size:32px; }
+    .winner-names{ font-size:24px; }
     .turn-banner{ padding:12px 14px; }
     .turn-banner > div{ gap:8px !important; flex-wrap:wrap; }
     .turn-banner .t-num{ font-size:22px; white-space:nowrap; }
@@ -125,23 +129,34 @@
     border:2.5px solid #fff; box-shadow:0 0 0 1.5px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.3); flex:0 0 auto;
     position:relative; z-index:1;
   }
+  .token.star{background:none; border:none; box-shadow:none; border-radius:0; width:34px; height:34px; margin:-2px;}
+  .token.star svg{width:100%; height:100%;}
   /* ---- choice grid ---- */
   .choice-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:12px; margin-top:6px;}
   .p-choice{
     border-radius:12px; padding:12px; border:2px solid #EDEAE0; background:#FCFBF8;
   }
-  .p-choice .pname{display:flex; align-items:center; gap:8px; font-weight:700; font-size:18px; margin-bottom:10px;}
+  .p-choice .pname{display:flex; align-items:center; gap:8px; font-weight:700; font-size:20px; margin-bottom:10px; overflow-wrap:anywhere;}
   .modebtns{display:flex; gap:4px;}
   .modebtn{
     flex:1; padding:12px 0 8px; border-radius:8px; border:1.5px solid #ddd8cc; background:#fff;
     font-family:'Oswald',sans-serif; font-size:16px; cursor:pointer; letter-spacing:0.03em;
     display:flex; flex-direction:column; align-items:center; gap:2px;
   }
-  .modebtn.car.sel{background:var(--asphalt); color:#fff; border-color:var(--asphalt);}
-  .modebtn.train.sel{background:var(--rail); color:#fff; border-color:var(--rail);}
+  /* アイコンは車・電車で同じ縮尺にし、下端をそろえて並べる（車の方が背が低い） */
+  .mode-icon{height:58px; display:flex; align-items:flex-end; justify-content:center;}
+  .mode-img{display:block; height:auto;}
+  .mode-img.train{height:58px;}
+  .mode-img.car{height:42px;}
+  .mode-label{font-family:'Oswald',sans-serif; font-size:18px; font-weight:600; color:#111; letter-spacing:0.02em; line-height:1.1; margin-top:4px;}
+  .modebtn{transition:background 0.15s, border-color 0.15s, box-shadow 0.15s;}
+  .modebtn.car.sel{background:#FFEDE5; border-color:#FA4400; box-shadow:0 0 0 2px #FA4400 inset;}
+  .modebtn.train.sel{background:#E6F2E9; border-color:#116927; box-shadow:0 0 0 2px #116927 inset;}
   /* ---- result ---- */
-  .result-row{display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #EDEAE0; font-size:18px;}
+  .result-row{display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #EDEAE0; font-size:19px;}
   .result-row:last-child{border-bottom:none;}
+  .rr-name{flex:1; font-size:22px; min-width:0; overflow-wrap:anywhere;}
+  .rr-pos{font-size:18px; color:#6b6f74; width:130px; text-align:right; flex:none;}
   .dot{width:14px; height:14px; border-radius:50%; flex:0 0 auto;}
   .badge{
     font-family:'Oswald',sans-serif; font-size:20px; padding:5px 14px; border-radius:20px; font-weight:600;
@@ -154,25 +169,54 @@
     display:flex; align-items:center; justify-content:center;
   }
   .reflect-btn:hover{transform:scale(1.1);}
+  .reflect-row{display:flex; gap:28px;}
+  .reflect-label{font-size:15px; color:#6b6f74; text-align:center; width:150px; line-height:1.3; font-weight:600; white-space:nowrap;}
   .reflect-btn.sel{box-shadow:0 0 0 2.5px var(--asphalt); transform:scale(1.15);}
   /* ---- chart ---- */
   .chart-title{font-size:14px; font-weight:700; color:#6b6f74; margin:12px 0 6px; letter-spacing:0.02em;}
   .bar-row{display:flex; align-items:center; gap:10px; margin-bottom:8px;}
-  .bar-label{width:80px; font-size:14px; flex:0 0 auto;}
+  .bar-label{width:104px; font-size:16px; flex:0 0 auto; display:flex; align-items:center; gap:5px; min-width:0;}
   .bar-track{flex:1; background:#EDEAE0; border-radius:6px; height:18px; overflow:hidden;}
   .bar-fill{height:100%; border-radius:6px; transition:width 0.5s ease;}
-  .bar-val{width:80px; text-align:right; font-family:'Oswald',sans-serif; font-size:14px; flex:0 0 auto;}
+  .bar-val{width:84px; text-align:right; font-family:'Oswald',sans-serif; font-size:15px; flex:0 0 auto;}
   /* ---- end ---- */
   .rank-card{
     display:flex; align-items:center; gap:10px; padding:10px; border-radius:12px; background:#FCFBF8;
     margin-bottom:6px; border:1px solid #EDEAE0;
   }
-  .rank-num{font-family:'Oswald',sans-serif; font-size:20px; font-weight:700; width:26px; color:#6b6f74; flex:none;}
-  .rank-name{font-weight:700; width:90px; font-size:15px; flex:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .rank-num{font-family:'Oswald',sans-serif; font-size:22px; font-weight:700; width:28px; color:#6b6f74; flex:none;}
+  .rank-name{font-weight:700; width:104px; font-size:17px; flex:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .rank-icons{flex:1 1 auto; display:flex; overflow-x:auto; gap:5px; min-width:0;}
-  .rank-stats{font-size:13px; color:#6b6f74; text-align:right; flex:none; margin-left:auto; padding-left:10px;}
+  .rank-stats{font-size:14px; color:#6b6f74; text-align:right; flex:none; margin-left:auto; padding-left:10px;}
+  /* 1位のカードは金色で強調（同着1位は全員） */
+  .rank-card.winner{background:linear-gradient(135deg,#FFF6D6,#FDE9A8); border:2px solid #E8B830;}
+  .rank-card.winner .rank-num{color:#B8860B;}
+  /* 最終画面の「1位発表」演出（時間帯の演出と同じくフェードイン→フェードアウト） */
+  #screen-end{position:relative;}
+  .winner-overlay{background:linear-gradient(160deg,#FFE9A6 0%,#F6C343 55%,#E0A21B 100%) !important; color:#3a2a00 !important; z-index:60;}
+  .winner-overlay .pt-label{font-size:44px;}
+  .pt-sub{font-family:'Oswald','Zen Kaku Gothic New',sans-serif; font-size:40px; font-weight:800; letter-spacing:0.08em; margin-top:10px; color:#FFD54A; text-shadow:0 2px 8px rgba(0,0,0,0.35);}
+  .winner-names{font-size:34px; font-weight:800; margin-top:12px; line-height:1.3; padding:0 16px; overflow-wrap:anywhere;}
   .hint{font-size:16px; color:#8a8e93; margin-top:4px;}
   .hidden{display:none !important;}
+  /* スマホ向けの追加調整（通常のスタイルより後に書いて確実に上書きする） */
+  @media (max-width: 480px){
+    /* 振り返りの顔ボタン：3つ並べても画面幅に収まるよう小さくする */
+    .reflect-row{ gap:8px; }
+    .reflect-btn{ width:68px; height:68px; }
+    .reflect-btn svg{ width:44px; height:44px; }
+    .reflect-label{ width:92px; font-size:13px; white-space:normal; }
+    /* 順位カード：アイコン列を2段目に回して、名前と成績を1段目に収める */
+    .rank-card{ flex-wrap:wrap; }
+    /* 結果の1行：名前を1段目、進んだマス数と現在地を2段目に */
+    .result-row{ flex-wrap:wrap; row-gap:6px; }
+    .rr-name{ flex:1 1 calc(100% - 40px); font-size:20px; }
+    .result-row .badge{ font-size:16px; padding:4px 12px; margin-left:30px; }
+    .rr-pos{ width:auto; margin-left:auto; font-size:16px; }
+    .rank-name{ width:auto; flex:1 1 0; min-width:0; }
+    .rank-icons{ order:5; flex:1 1 100%; }
+    .rank-stats{ order:6; flex:1 1 100%; text-align:left; margin-left:0; padding-left:0; font-size:13px; }
+  }
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -181,7 +225,10 @@
 <div class="wrap">
   <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
     <h1 id="appTitleEl">交通すごろく</h1>
-    <button class="ghost" id="langToggleBtn" style="padding:8px 16px; font-size:13px;" onclick="toggleLang()">EN</button>
+    <div style="display:flex; gap:8px;">
+      <button class="ghost" id="zoomToggleBtn" style="padding:8px 16px; font-size:13px;" onclick="cycleZoom()">表示 100%</button>
+      <button class="ghost" id="langToggleBtn" style="padding:8px 16px; font-size:13px;" onclick="toggleLang()">EN</button>
+    </div>
   </div>
 
   <!-- START -->
@@ -191,11 +238,11 @@
       <div style="font-size:19px; margin-bottom:14px;" id="txt_playerCount">4〜8人で遊びます</div>
 
       <div style="font-weight:700; font-size:20px; margin-bottom:6px;" id="txt_rule1title">① 毎ターン、移動手段を選ぶ</div>
-      <div style="font-size:18px; margin-bottom:14px; margin-left:10px;" id="txt_rule1body">🚗 CAR（車）　または　🚆 TRAIN（電車）</div>
+      <div style="font-size:18px; margin-bottom:14px; margin-left:10px;" id="txt_rule1body">CAR（車）　または　TRAIN（電車）</div>
 
       <div style="font-weight:700; font-size:20px; margin-bottom:6px;" id="txt_rule2title">② 選んだ移動手段で進む</div>
-      <div style="font-size:18px; margin-bottom:4px; margin-left:10px;" id="txt_rule2train">🚆 電車：いつも4マス進みます</div>
-      <div style="font-size:18px; margin-bottom:14px; margin-left:10px;" id="txt_rule2car">🚗 車：0〜最大10マス（時間帯や混み具合によって変わり、出す人が多いほど進めなくなります）</div>
+      <div style="font-size:18px; margin-bottom:4px; margin-left:10px;" id="txt_rule2train">電車：いつも4マス進みます</div>
+      <div style="font-size:18px; margin-bottom:14px; margin-left:10px;" id="txt_rule2car">車：0〜最大10マス（時間帯や混み具合によって変わり、出す人が多いほど進めなくなります）</div>
 
       <div style="font-weight:700; font-size:20px; margin-bottom:6px;" id="txt_rule3title">③ 8ターン遊ぶ</div>
       <div style="font-size:18px; margin-left:10px;" id="txt_rule3body">8ターン終了時に、一番先まで進んでいる人の勝ち！</div>
@@ -213,9 +260,11 @@
 
     <div id="onlineJoinBox" class="hidden" style="margin-bottom:18px; padding:14px; background:#f7f7f7; border-radius:10px;">
       <div style="font-weight:700; margin-bottom:8px; font-size:16px;" id="txt_enterCode">ルームコードを入力</div>
-      <input type="text" id="joinCodeInput" placeholder="例：1234" style="padding:8px; width:140px; font-size:16px;">
-      <button class="primary" id="btn_searchCode" onclick="joinRoom()">コードで検索</button>
-      <div id="joinPlayerList" style="margin-top:12px;"></div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <input type="text" id="joinCodeInput" placeholder="例：1234" inputmode="numeric" style="padding:8px; flex:0 0 140px; width:140px; font-size:16px;">
+        <input type="text" id="joinNameInput" placeholder="あなたの名前（任意）" style="padding:8px; flex:1 1 180px; min-width:0; font-size:16px;">
+        <button class="primary" id="btn_searchCode" onclick="joinRoom()">参加する</button>
+      </div>
     </div>
 
     <div id="hostSetupBox">
@@ -247,6 +296,7 @@
     <div id="periodTransition" class="period-transition">
       <div id="periodTransitionIcon" class="pt-icon"></div>
       <div id="periodTransitionLabel" class="pt-label"></div>
+      <div id="periodTransitionSub" class="pt-sub hidden"></div>
     </div>
     <div class="turn-banner">
       <div style="display:flex; align-items:center; gap:14px;">
@@ -288,6 +338,11 @@
 
   <!-- END -->
   <div id="screen-end" class="hidden card">
+    <div id="winnerOverlay" class="period-transition winner-overlay">
+      <div class="pt-icon">🏆</div>
+      <div id="winnerOverlayLabel" class="pt-label"></div>
+      <div id="winnerOverlayNames" class="winner-names"></div>
+    </div>
     <h1 style="font-size:20px;" id="endTitle">結果発表</h1>
     <div class="sub" data-i18n="endSubtitle">あなたの選択が、渋滞・CO₂・出費にどれだけ影響したかを振り返ってみましょう</div>
     <div id="endRanking"></div>
@@ -298,7 +353,7 @@
     <div class="chart-title" data-i18n="chartSocial">このセッションの社会全体のCO₂排出量</div>
     <div id="endSocialCo2Chart"></div>
     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
-      <button class="primary" id="btn_downloadCsv" onclick="downloadCSV()">Excelでダウンロード（全セッション分）</button>
+      <button class="primary" id="btn_downloadCsv" onclick="downloadExcel()">Excelでダウンロード（全セッション分）</button>
       <button class="ghost" id="replayBtn" onclick="newSession()">もう一度プレイする</button>
       <button class="ghost" id="setupReplayBtn" onclick="newSessionWithSetup()">プレイヤー構成を変えてもう一度</button>
     </div>
@@ -306,9 +361,16 @@
 </div>
 
 <script>
+// 車・電車の画像（ボタン・ルール説明・最終画面で使用。ページ読み込み直後から使うので先頭に置く）
+//（自作アイコン。背景を透明にしてPNGで埋め込み）
+const MODE_IMG = {
+  C: 'data:image/png;base64,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',
+  T: 'data:image/png;base64,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'
+};
+
 // ============================================================
 // 多言語対応（日本語 / 英語）。ゲーム画面の文言のみが対象で、
-// Excel出力（downloadCSV内の列名）は仕様により日本語のまま固定。
+// Excel出力（downloadExcel内の列名）は仕様により日本語のまま固定。
 // ============================================================
 let LANG = 'ja';
 
@@ -320,19 +382,26 @@ const I18N = {
     howToPlay: 'あそびかた',
     playerCount: '4〜8人で遊びます',
     rule1title: '① 毎ターン、移動手段を選ぶ',
-    rule1body: '🚗 CAR（車）　または　🚆 TRAIN（電車）',
+    rule1body: (car, train) => `${car} CAR（車）　または　${train} TRAIN（電車）`,
     rule2title: '② 選んだ移動手段で進む',
-    rule2train: '🚆 電車：いつも4マス進みます',
-    rule2car: '🚗 車：0〜最大10マス（時間帯や混み具合によって変わり、出す人が多いほど進めなくなります）',
+    rule2train: icon => `${icon} 電車：いつも4マス進みます`,
+    rule2car: icon => `${icon} 車：0〜最大10マス（時間帯や混み具合によって変わり、出す人が多いほど進めなくなります）`,
     rule3title: '③ 8ターン遊ぶ',
     rule3body: '8ターン終了時に、一番先まで進んでいる人の勝ち！',
     beginBtn: 'はじめる →',
     modeLocal: 'ローカルで遊ぶ',
     modeHost: 'オンラインでルームを作る（ホスト）',
     modeJoin: 'オンラインでルームに参加する',
-    enterCode: 'ルームコードを入力',
+    enterCode: 'ルームコードとあなたの名前を入力',
     codePlaceholder: '例：1234',
-    searchCode: 'コードで検索',
+    searchCode: '参加する',
+    joinNamePlaceholder: 'あなたの名前（任意）',
+    alert_roomNotFound: 'そのルームコードの部屋が見つかりません。コードを確認してください',
+    alert_roomFull: 'この部屋はすでに満員です',
+    joinedAs: name => `あなたは「${name}」として参加しました`,
+    finalTurn: '最終ターン',
+    winnerLabel: '1位',
+    displaySize: pct => `表示 ${pct}%`,
     playerCountTitle: '① 参加人数',
     playerNameTitle: '② プレイヤー名（任意）',
     startGameBtn: 'ゲーム開始 → 1ターン目',
@@ -364,11 +433,7 @@ const I18N = {
     playerNamePlaceholder: i => `プレイヤー${i}`,
     hostNamePlaceholder: 'あなたの名前（ホスト）',
     hostNameHint: '他の参加者は、ルームに参加するときにそれぞれ自分の名前を入力します',
-    joinTapHint: '参加する枠をタップし、あなたの名前を入力してください：',
-    joined: '（参加済み）',
-    joining: '参加中…',
     notJoined: '（未参加）',
-    enterYourName: 'あなたの名前を入力してください',
     you: '（あなた）',
     selectedMark: '選択済み ✓',
     choosingMark: '選択中…',
@@ -400,7 +465,6 @@ const I18N = {
     periodNames: {'朝':'朝','昼':'昼','夕方':'夕方','夜':'夜'},
     alert_firebaseFail: 'オンライン機能を読み込めませんでした。インターネット接続を確認し、ページを再読み込みしてください。',
     alert_createRoomFail: err => 'ルーム作成に失敗しました： ' + err,
-    alert_watchRoomFail: err => 'ルームの監視に失敗しました： ' + err,
     alert_joinFail: err => '参加に失敗しました： ' + err,
     alert_notAllJoined: 'まだ参加していない人がいます。全員が参加するまで開始できません。',
     alert_startNotifyFail: err => 'ゲーム開始の通知に失敗しました： ' + err,
@@ -421,19 +485,26 @@ const I18N = {
     howToPlay: 'How to Play',
     playerCount: 'Play with 4–8 people',
     rule1title: '① Each turn, choose your mode of transport',
-    rule1body: '🚗 CAR or 🚆 TRAIN',
+    rule1body: (car, train) => `${car} CAR or ${train} TRAIN`,
     rule2title: '② Move forward based on your choice',
-    rule2train: '🚆 Train: always advances 4 squares',
-    rule2car: '🚗 Car: 0 to 10 squares (varies by time of day and congestion — the more people choose car, the less everyone advances)',
+    rule2train: icon => `${icon} Train: always advances 4 squares`,
+    rule2car: icon => `${icon} Car: 0 to 10 squares (varies by time of day and congestion — the more people choose car, the less everyone advances)`,
     rule3title: '③ Play 8 turns',
     rule3body: 'Whoever has advanced the furthest after 8 turns wins!',
     beginBtn: 'Start →',
     modeLocal: 'Play locally',
     modeHost: 'Create an online room (host)',
     modeJoin: 'Join an online room',
-    enterCode: 'Enter room code',
+    enterCode: 'Enter the room code and your name',
     codePlaceholder: 'e.g. 1234',
-    searchCode: 'Search by code',
+    searchCode: 'Join',
+    joinNamePlaceholder: 'Your name (optional)',
+    alert_roomNotFound: 'No room was found with that code. Please check the code',
+    alert_roomFull: 'This room is already full',
+    joinedAs: name => `You joined as "${name}"`,
+    finalTurn: 'FINAL TURN',
+    winnerLabel: '1st place',
+    displaySize: pct => `Size ${pct}%`,
     playerCountTitle: '① Number of players',
     playerNameTitle: '② Player names (optional)',
     startGameBtn: 'Start game → Turn 1',
@@ -465,11 +536,7 @@ const I18N = {
     playerNamePlaceholder: i => `Player ${i}`,
     hostNamePlaceholder: 'Your name (host)',
     hostNameHint: 'Other participants will each enter their own name when they join the room',
-    joinTapHint: 'Tap a slot to join and enter your name:',
-    joined: '(joined)',
-    joining: 'Joining…',
     notJoined: '(not joined)',
-    enterYourName: 'Please enter your name',
     you: '(You)',
     selectedMark: 'Selected ✓',
     choosingMark: 'Choosing…',
@@ -501,7 +568,6 @@ const I18N = {
     periodNames: {'朝':'Morning','昼':'Midday','夕方':'Evening','夜':'Night'},
     alert_firebaseFail: 'Failed to load online features. Please check your internet connection and reload the page.',
     alert_createRoomFail: err => 'Failed to create room: ' + err,
-    alert_watchRoomFail: err => 'Failed to watch the room: ' + err,
     alert_joinFail: err => 'Failed to join: ' + err,
     alert_notAllJoined: 'Not everyone has joined yet. You cannot start until everyone has joined.',
     alert_startNotifyFail: err => 'Failed to notify that the game has started: ' + err,
@@ -536,10 +602,10 @@ function applyStaticText(){
   document.getElementById('txt_howToPlay').textContent = t('howToPlay');
   document.getElementById('txt_playerCount').textContent = t('playerCount');
   document.getElementById('txt_rule1title').textContent = t('rule1title');
-  document.getElementById('txt_rule1body').textContent = t('rule1body');
+  document.getElementById('txt_rule1body').innerHTML = t('rule1body')(modeIconHtml('C', 26), modeIconHtml('T', 26));
   document.getElementById('txt_rule2title').textContent = t('rule2title');
-  document.getElementById('txt_rule2train').textContent = t('rule2train');
-  document.getElementById('txt_rule2car').textContent = t('rule2car');
+  document.getElementById('txt_rule2train').innerHTML = t('rule2train')(modeIconHtml('T', 26));
+  document.getElementById('txt_rule2car').innerHTML = t('rule2car')(modeIconHtml('C', 26));
   document.getElementById('txt_rule3title').textContent = t('rule3title');
   document.getElementById('txt_rule3body').textContent = t('rule3body');
   document.getElementById('btn_begin').textContent = t('beginBtn');
@@ -549,6 +615,8 @@ function applyStaticText(){
   document.getElementById('txt_enterCode').textContent = t('enterCode');
   document.getElementById('joinCodeInput').placeholder = t('codePlaceholder');
   document.getElementById('btn_searchCode').textContent = t('searchCode');
+  document.getElementById('joinNameInput').placeholder = t('joinNamePlaceholder');
+  updateZoomBtnLabel();
   document.getElementById('txt_playerCountTitle').textContent = t('playerCountTitle');
   document.getElementById('txt_playerNameTitle').textContent = t('playerNameTitle');
   document.getElementById('txt_roomCodeLabel').textContent = t('roomCodeLabel');
@@ -584,23 +652,39 @@ function applyStaticText(){
     const p = periodOf(turn);
     document.getElementById('turnLabel').textContent = `TURN ${turn} / ${TOTAL_TURNS}`;
     renderPeriodLabelTextOnly(p);
-    if(isOnline){
-      if(onlinePhase === 'results'){ renderOnlineResults(p); } else { renderOnlineChoiceGrid(); }
-    } else {
-      if(!document.getElementById('resultCard').classList.contains('hidden')){
-        refreshLocalResultTitleIfVisible(p);
-        renderReflectionButtons();
-        updateNextBtnState();
-      } else {
-        renderChoiceGrid();
-        updateConfirmBtnState();
-      }
-    }
+    if(phase === 'results'){ renderTurnResults(p); }
+    else if(phase === 'choosing'){ renderChoiceGrid(); renderChoiceControls(); }
   }
   if(!document.getElementById('screen-end').classList.contains('hidden') && players.length){
     showEnd();
   }
 }
+
+// ---- 表示サイズ（ページ全体の拡大率）----
+// ブラウザ自体の拡大率はページから変えられないため、ページの中身を縮小表示する。
+// 初期値：PCなど画面が広い場合は75%、スマホは100%。ボタンで 75% → 90% → 100% と切り替え、選んだ値はこの端末に保存する。
+const ZOOM_STEPS = [75, 90, 100];
+let zoomPct = 100;
+function applyZoom(){
+  document.documentElement.style.zoom = (zoomPct / 100);
+  updateZoomBtnLabel();
+  if(!document.getElementById('screen-game').classList.contains('hidden') && players.length){ renderTracks(); }
+}
+function updateZoomBtnLabel(){
+  const b = document.getElementById('zoomToggleBtn');
+  if(b) b.textContent = t('displaySize')(zoomPct);
+}
+function cycleZoom(){
+  zoomPct = ZOOM_STEPS[(ZOOM_STEPS.indexOf(zoomPct) + 1) % ZOOM_STEPS.length];
+  try { localStorage.setItem('sugorokuZoom', String(zoomPct)); } catch(e){}
+  applyZoom();
+}
+(function initZoom(){
+  let saved = null;
+  try { saved = parseInt(localStorage.getItem('sugorokuZoom')); } catch(e){}
+  zoomPct = ZOOM_STEPS.includes(saved) ? saved : (window.innerWidth >= 1024 ? 75 : 100);
+  document.documentElement.style.zoom = (zoomPct / 100);
+})();
 
 function toggleLang(){
   LANG = (LANG === 'ja') ? 'en' : 'ja';
@@ -609,14 +693,6 @@ function toggleLang(){
 }
 
 // ローカル版：結果画面が表示されている間に言語を切り替えても、結果タイトルの文言を追随させる
-function refreshLocalResultTitleIfVisible(p){
-  const carCount = Object.values(choices).filter(c=>c==='C').length;
-  const trainCount = Object.values(choices).filter(c=>c==='T').length;
-  const carAdvance = carAdvanceFor(p.name, players.length, carCount);
-  const trainAdvance = 4;
-  document.getElementById('resultTitle').textContent =
-    t('resultHeaderLocal')(periodDisplay(p.name), carCount, trainCount, carAdvance, trainAdvance);
-}
 
 const firebaseConfig = {
   apiKey: "AIzaSyB89Foy2nzejKw7JTbjSjMKucbl94MGUp4",
@@ -641,7 +717,20 @@ try {
   console.warn('Firebase初期化に失敗しました。オンライン機能は無効化されます（ローカルモードは通常通り使えます）：', e);
 }
 
-const COLORS = ['#16305A','#E8B830','#1B7B7A','#E8763C','#8B2E3C','#7A5C3E','#5B8C4A','#5D7A94'];
+// 駒の色はP1〜P4の4色。P5〜P8は同じ4色を使い、形を「星」にして区別する
+const COLORS = ['#16305A','#E8B830','#1B7B7A','#E8763C'];
+function colorOf(id){ return COLORS[id % COLORS.length]; }
+function isStarPlayer(id){ return id >= COLORS.length; }
+const STAR_POINTS = '12,1.5 14.9,8.6 22.5,9.1 16.7,14 18.5,21.5 12,17.4 5.5,21.5 7.3,14 1.5,9.1 9.1,8.6';
+// プレイヤーの目印（丸 or 星）。駒・名前の横の丸・設定画面の色見本などで共通して使う
+function playerMarkHtml(id, size, color){
+  const c = color || colorOf(id);
+  if(isStarPlayer(id) && typeof size === 'number') size = Math.round(size * 1.25); // 星は丸より小さく見えるので少し大きめに
+  const shape = isStarPlayer(id)
+    ? `<polygon points="${STAR_POINTS}" fill="${c}" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>`
+    : `<circle cx="12" cy="12" r="10" fill="${c}" stroke="#fff" stroke-width="2"/>`;
+  return `<svg class="pmark" viewBox="0 0 24 24" width="${size}" height="${size}" style="flex:0 0 auto; overflow:visible; filter:drop-shadow(0 0 1px rgba(0,0,0,0.45));">${shape}</svg>`;
+}
 const TOTAL_TURNS = 8;
 // 固定ゴールは設けず、「今どれだけ進んだか」を見せるトラックにする。表示幅は最大進行位置に応じて自動で伸びる。
 const TRACK_PADDING = 6; // 先頭に少し余白を持たせて、まだ動きが少ない序盤でも間延びしすぎないようにする
@@ -674,14 +763,17 @@ function marginalCongestionContribution(periodName, totalPlayers, carCount){
   return Number((vK - vK1).toFixed(2));
 }
 
-// 時間帯：朝2ターン・昼2ターン・夕方2ターン・夜2ターン（計8ターン）。電車は時間帯に関係なく常に2マス固定。
+// 時間帯：朝2ターン・昼2ターン・夕方2ターン・夜2ターン（計8ターン）。電車は時間帯に関係なく常に4マス固定。
+const TRAIN_ADVANCE = 4;
+// 1ターンあたりのCO2排出量(kg)と出費(円)。C=車, T=電車
+const MODE_COST = { C:{co2:0.655, money:57}, T:{co2:0.140, money:200} };
 // ローカル版・オンライン版で共通の「結果一覧の1行」HTML生成
-function resultRowHtml(color, name, mode, advance, pos){
+function resultRowHtml(playerId, color, name, mode, advance, pos){
   return `<div class="result-row">
-    <span class="dot" style="background:${color}"></span>
-    <span style="flex:1; font-size:20px;">${name}</span>
+    ${playerMarkHtml(playerId, 18, color)}
+    <span class="rr-name">${name}</span>
     <span class="badge ${mode==='C'?'car':'train'}">${t('modeWord')(mode)} +${advance}${t('sqUnit')}</span>
-    <span style="font-size:18px; color:#6b6f74; width:130px; text-align:right;">${t('positionLabel')} ${pos}${t('sqUnit')}</span>
+    <span class="rr-pos">${t('positionLabel')} ${pos}${t('sqUnit')}</span>
   </div>`;
 }
 
@@ -702,7 +794,13 @@ window.addEventListener('beforeunload', function(e){
 let turn = 1;
 let sessionNumber = 1; // 「もう一度プレイする」でインクリメント。複数回プレイの比較用にログには全セッション分残す
 let choices = {}; // playerId -> 'C' or 'T'
-let log = []; // 1行=1プレイヤー×1ターンのログ（Excel/CSV出力用）。セッションをまたいで蓄積する
+let log = []; // 1行=1プレイヤー×1ターンのログ（Excel出力用）。セッションをまたいで蓄積する
+let phase = 'choosing'; // 'choosing'（選択中）| 'results'（結果表示中）| 'ended'（終了。オンラインのみ使用）
+// ---- 意思決定の記録（オンラインのみ）----
+// 各自の端末で「選択画面が表示されてから最初にカードを押すまでの秒数」と「選び直した回数」を測り、Firebaseに送る。
+// 端末内の時計の差分で測るので、通信の速さや端末ごとの時計のずれの影響を受けない。
+let decisions = {};      // 全員分 {playerId: {firstPickSec, changes}}（Firebaseから受け取る）
+let myTurnTimer = null;  // 自分の計測中データ {key, shownAt, firstSec, last, changes}
 
 // ---- オンラインモード関連 ----
 let currentMode = 'local'; // 'local' | 'online-host' | 'online-join'
@@ -734,15 +832,7 @@ function genRoomCode(){
 function createRoom(){
   if(!firebaseReady){ alert(t('alert_firebaseFail')); return; }
   const n = parseInt(document.getElementById('countDisp').textContent);
-  const newPlayers = [];
-  for(let i=0;i<n;i++){
-    const nameEl = document.getElementById('pname'+i);
-    const typedName = nameEl ? nameEl.value.trim() : '';
-    newPlayers.push({
-      id:i, name:(typedName || ('P'+(i+1))), color:COLORS[i],
-      pos:0, co2:0, money:0, nuisance:0, connected:(i===0)
-    });
-  }
+  const newPlayers = buildPlayers(n).map(pl => ({...pl, connected:(pl.id===0)})); // ホスト(P1)だけ参加済み
   roomCode = genRoomCode();
   isOnline = true; isHost = true; myPlayerId = 0;
   roomRef = db.ref('rooms/'+roomCode);
@@ -751,11 +841,7 @@ function createRoom(){
     totalPlayers:n, totalTurns: TOTAL_TURNS,
     players:newPlayers, choices:{}, log:[]
   }).then(()=>{
-    document.getElementById('modeSwitchButtons').classList.add('hidden');
-    document.getElementById('hostSetupBox').classList.add('hidden');
-    document.getElementById('onlineJoinBox').classList.add('hidden');
-    document.getElementById('roomCodeDisplay').classList.remove('hidden');
-    document.getElementById('roomCodeText').textContent = roomCode;
+    showRoomWaiting();
     attachRoomListener();
   }).catch(err=>{
     alert(t('alert_createRoomFail')(err.message));
@@ -765,7 +851,9 @@ function createRoom(){
 function renderRoomPlayersStatus(){
   const el = document.getElementById('roomPlayersStatus');
   if(!el || !players.length) return;
-  el.innerHTML = players.map(p=>`<span style="display:inline-block; margin:3px 6px; padding:5px 12px; border-radius:14px; background:${p.connected?p.color:'#ddd'}; color:${p.connected?'#fff':'#666'}; font-size:13px;">${p.name}${p.connected?' ✓':t('notJoined')}</span>`).join('');
+  el.innerHTML = players.map(p=>`<span style="display:inline-block; margin:3px 6px; padding:6px 14px; border-radius:16px; background:${p.connected?p.color:'#ddd'}; color:${p.connected?'#fff':'#666'}; font-size:15px;">${isStarPlayer(p.id)?'★ ':''}${p.name}${p.connected?' ✓':t('notJoined')}</span>`).join('');
+  const me = (!isHost && myPlayerId !== null) ? players.find(p=>p.id===myPlayerId) : null;
+  if(me){ el.innerHTML += `<div style="margin-top:10px; font-size:16px; font-weight:700;">${t('joinedAs')(me.name)}</div>`; }
 
   // 全員が参加するまで、ホストは「ゲームを開始する」を押せないようにする
   const beginBtn = document.getElementById('hostBeginBtn');
@@ -788,75 +876,49 @@ function hostBeginGame(){
       alert(t('alert_startNotifyFail')(err.message));
     });
   }
-  document.getElementById('screen-setup').classList.add('hidden');
-  document.getElementById('screen-game').classList.remove('hidden');
-  document.getElementById('localHint').classList.add('hidden');
-  document.getElementById('localControls').classList.add('hidden');
-  document.getElementById('onlineControls').classList.remove('hidden');
-  renderOnlineTurn();
+  showGameScreen();
+  renderTurn();
 }
 
-let joinListRef = null; // 参加待ちの一覧をリアルタイム監視するための参照（検索し直したら差し替える）
 
-function renderJoinPlayerList(data){
-  const listEl = document.getElementById('joinPlayerList');
-  data.players.forEach((p,i)=>{ listEl.dataset['name'+i] = p.name; });
-  listEl.innerHTML = `<div style="margin-bottom:6px;">${t('joinTapHint')}</div>` + data.players.map((p,i)=>
-    `<button class="ghost" style="margin:4px;" ${p.connected?'disabled':''} onclick="claimPlayer(${i})">${p.name}${p.connected?t('joined'):''}</button>`
-  ).join('');
-}
 
+
+
+
+// ルームコードで部屋を探し、空いている枠のうち番号が一番小さいものに自動で割り当てる（入った順にP2, P3, …）
+// 同時に複数人が参加しても同じ枠を取り合わないよう、枠の確保はトランザクションで行う
 function joinRoom(){
   if(!firebaseReady){ alert(t('alert_firebaseFail')); return; }
   const code = document.getElementById('joinCodeInput').value.trim();
   if(!code) return;
-  if(joinListRef){ joinListRef.off('value'); } // 前回検索した部屋の監視を止めてから、新しい部屋を監視する
-  joinListRef = db.ref('rooms/'+code);
-  joinListRef.on('value', snap=>{
+  const typedName = document.getElementById('joinNameInput').value.trim();
+  const joinBtn = document.getElementById('btn_searchCode');
+  joinBtn.disabled = true; // 通信中の連打防止
+  const restore = () => { joinBtn.disabled = false; };
+  const ref = db.ref('rooms/'+code);
+  ref.once('value').then(snap=>{
     const data = snap.val();
-    if(!data || !data.players){ return; } // 部屋がまだ無い/消えた場合は何もしない
-    roomCode = code;
-    // 自分がすでに参加を確定した後（myPlayerIdが決まった後）は、この一覧を更新しない
-    if(myPlayerId !== null) return;
-    renderJoinPlayerList(data);
-  }, err=>{
-    alert(t('alert_watchRoomFail')(err.message));
-  });
+    if(!data || !data.players){ alert(t('alert_roomNotFound')); restore(); return; }
+    const freeIds = data.players.map((p,i)=>({p,i})).filter(x=>!x.p.connected).map(x=>x.i);
+    const tryClaim = (k) => {
+      if(k >= freeIds.length){ alert(t('alert_roomFull')); restore(); return; }
+      const id = freeIds[k];
+      ref.child('players/'+id+'/connected').transaction(cur => cur ? undefined : true).then(res=>{
+        if(!res.committed){ tryClaim(k+1); return; } // 他の人が先に取った枠なら次の枠へ
+        const finalName = typedName || data.players[id].name || ('P'+(id+1));
+        return ref.child('players/'+id).update({ name: finalName }).then(()=>{
+          roomCode = code; myPlayerId = id; isOnline = true; isHost = false;
+          roomRef = ref;
+          attachRoomListener();
+          showRoomWaiting();
+          document.getElementById('hostBeginBtn').classList.add('hidden');
+          document.getElementById('waitingForHostHint').classList.remove('hidden');
+        });
+      }).catch(err=>{ alert(t('alert_joinFail')(err.message)); restore(); });
+    };
+    tryClaim(0);
+  }).catch(err=>{ alert(t('alert_joinFail')(err.message)); restore(); });
 }
-
-function claimPlayer(id){
-  const defaultName = document.getElementById('joinPlayerList').dataset['name'+id] || ('P'+(id+1));
-  const inputName = prompt(t('enterYourName'), defaultName);
-  if(inputName === null) return; // キャンセル
-  const finalName = inputName.trim() || defaultName;
-  // 通信中に他の枠を連打されるのを防ぐため、押した瞬間に一覧のボタンを全部押せなくする
-  const listEl = document.getElementById('joinPlayerList');
-  const allBtns = listEl.querySelectorAll('button');
-  allBtns.forEach(b => b.disabled = true);
-  const clickedBtn = listEl.querySelector(`button[onclick="claimPlayer(${id})"]`);
-  if(clickedBtn) clickedBtn.textContent = t('joining');
-  myPlayerId = id; isOnline = true; isHost = false;
-  roomRef = db.ref('rooms/'+roomCode);
-  roomRef.child('players/'+id).update({ connected:true, name:finalName }).then(()=>{
-    if(joinListRef){ joinListRef.off('value'); joinListRef = null; }
-    attachRoomListener();
-    document.getElementById('modeSwitchButtons').classList.add('hidden');
-    document.getElementById('hostSetupBox').classList.add('hidden');
-    document.getElementById('onlineJoinBox').classList.add('hidden');
-    document.getElementById('roomCodeDisplay').classList.remove('hidden');
-    document.getElementById('roomCodeText').textContent = roomCode;
-    document.getElementById('hostBeginBtn').classList.add('hidden');
-    document.getElementById('waitingForHostHint').classList.remove('hidden');
-  }).catch(err=>{
-    alert(t('alert_joinFail')(err.message));
-    myPlayerId = null; isOnline = false; // 失敗したので未参加の状態に戻し、一覧のリアルタイム更新を再開する
-    // 失敗した場合はやり直せるようボタンを元に戻す
-    allBtns.forEach(b => b.disabled = false);
-    if(clickedBtn) clickedBtn.textContent = defaultName;
-  });
-}
-
-let onlinePhase = 'choosing';
 
 function attachRoomListener(){
   if(roomListenerAttached) return;
@@ -869,30 +931,27 @@ function attachRoomListener(){
     players = data.players || [];
     choices = data.choices || {};
     log = data.log || [];
-    onlinePhase = data.phase || 'choosing';
+    phase = data.phase || 'choosing';
+    decisions = data.decisions || {};
     renderRoomPlayersStatus();
 
     // ホストが「ゲームを開始する」を押したら、待機中の参加者も自動でゲーム画面に進む
     const setupEl = document.getElementById('screen-setup');
     if(data.started && setupEl && !setupEl.classList.contains('hidden')){
       gameInProgress = true;
-      setupEl.classList.add('hidden');
-      document.getElementById('screen-game').classList.remove('hidden');
-      document.getElementById('localHint').classList.add('hidden');
-      document.getElementById('localControls').classList.add('hidden');
-      document.getElementById('onlineControls').classList.remove('hidden');
+      showGameScreen();
     }
 
     // 結果画面(screen-end)に留まっている参加者は、新セッションが始まったら自動でゲーム画面に戻す
     const endScreenEl = document.getElementById('screen-end');
     const endScreenVisible = endScreenEl && !endScreenEl.classList.contains('hidden');
-    if(endScreenVisible && (onlinePhase === 'choosing' || onlinePhase === 'results')){
+    if(endScreenVisible && (phase === 'choosing' || phase === 'results')){
       endScreenEl.classList.add('hidden');
       document.getElementById('screen-game').classList.remove('hidden');
     }
 
     if(!document.getElementById('screen-game').classList.contains('hidden')){
-      renderOnlineTurn();
+      renderTurn();
     }
   });
 }
@@ -908,14 +967,23 @@ function renderPeriodLabelTextOnly(p){
 
 function renderPeriodLabel(p){
   renderPeriodLabelTextOnly(p);
-  showPeriodTransition(p);
+  showPeriodTransition(p, turn === TOTAL_TURNS);
 }
 
 // 時間帯（朝/昼/夕方/夜）が実際に切り替わった瞬間だけ、大きく表示してフェードアウトする
+// 最終ターンは時間帯が同じ（夜）でも「最終ターン」と一緒にもう一度出す
 let lastShownPeriodName = null;
-function showPeriodTransition(p){
-  if(p.name === lastShownPeriodName) return; // 同じ時間帯の再描画では出さない
-  lastShownPeriodName = p.name;
+function showPeriodTransition(p, isFinal){
+  const key = p.name + (isFinal ? ':final' : '');
+  if(key === lastShownPeriodName) return; // 同じ時間帯の再描画では出さない
+  lastShownPeriodName = key;
+  // 時間帯の演出が出ている間は選択時間に含めないよう、演出が終わる時刻を覚えておく
+  window._overlayEndsAt = performance.now() + (isFinal ? 2400 : 1800);
+  const subEl = document.getElementById('periodTransitionSub');
+  if(subEl){
+    subEl.textContent = isFinal ? t('finalTurn') : '';
+    subEl.classList.toggle('hidden', !isFinal);
+  }
   const overlay = document.getElementById('periodTransition');
   if(!overlay) return;
   document.getElementById('periodTransitionIcon').textContent = p.icon;
@@ -926,7 +994,7 @@ function showPeriodTransition(p){
   clearTimeout(window._periodTransitionTimer);
   window._periodTransitionTimer = setTimeout(()=>{
     overlay.classList.remove('show');
-  }, 1800);
+  }, isFinal ? 2400 : 1800);
 }
 
 // ローカル版・オンライン版で共通の「顔アイコン1個分」HTML生成
@@ -936,220 +1004,17 @@ function reflectionOptionHtml(idPrefix, opt, selectedValue, onclickExpr){
   return `<div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
     <button type="button" class="reflect-btn ${opt.value===selectedValue?'sel':''}" id="reflect-${idPrefix}-${opt.value}"
       style="background:${opt.color};" onclick="${onclickExpr}">${reflectFaceSvg(opt.value)}</button>
-    <span style="font-size:15px; color:#6b6f74; text-align:center; width:150px; line-height:1.3; font-weight:600; white-space:nowrap;">${t(opt.labelKey)}</span>
+    <span class="reflect-label">${t(opt.labelKey)}</span>
   </div>`;
 }
 
-function renderOnlineReflectionButtons(){
-  const el = document.getElementById('reflectionButtons');
-  if(!el) return;
-  const myEntry = log.slice().reverse().find(l => l.session===sessionNumber && l.turn===turn && l.playerId===myPlayerId);
-  const currentVal = myEntry ? myEntry.reflection : '';
-  el.innerHTML = `
-    <div style="display:flex; gap:28px;">
-      ${REFLECTION_OPTIONS.map(opt => reflectionOptionHtml('online', opt, currentVal, `pickOnlineReflection('${opt.value}')`)).join('')}
-    </div>
-  `;
-}
 
-function pickOnlineReflection(value){
-  const idx = log.map((l,i)=>({l,i})).reverse().find(x => x.l.session===sessionNumber && x.l.turn===turn && x.l.playerId===myPlayerId);
-  if(!idx) return;
-  const newLog = [...log];
-  newLog[idx.i] = {...newLog[idx.i], reflection: value};
-  roomRef.child('log').set(newLog).catch(err=>{ console.warn('振り返りの保存に失敗:', err); });
-  REFLECTION_OPTIONS.forEach(opt => {
-    const btn = document.getElementById(`reflect-online-${opt.value}`);
-    if(btn) btn.classList.toggle('sel', opt.value === value);
-  });
-}
-function renderOnlineTurn(){
-  const p = periodOf(turn);
-  renderPeriodLabel(p);
-  document.getElementById('turnLabel').textContent = `TURN ${turn} / ${TOTAL_TURNS}`;
-  if(onlinePhase === 'ended'){ showEnd(); return; }
-  renderTracks();
-  if(onlinePhase === 'results'){
-    document.getElementById('resultCard').classList.remove('hidden');
-    document.getElementById('choiceCard').classList.add('hidden');
-    renderOnlineResults(p);
-  } else {
-    document.getElementById('resultCard').classList.add('hidden');
-    document.getElementById('choiceCard').classList.remove('hidden');
-    renderOnlineChoiceGrid();
-  }
-}
 
-function renderOnlineResults(p){
-  const turnLog = log.filter(l=>l.session===sessionNumber && l.turn===turn);
-  const carCount = turnLog.filter(l=>l.mode==='C').length;
-  const trainCount = turnLog.filter(l=>l.mode==='T').length;
-  const carAdv = turnLog.find(l=>l.mode==='C');
-  const trainAdv = turnLog.find(l=>l.mode==='T');
-  const carPart = carAdv ? (LANG==='ja' ? `（車 ${carAdv.advance}マス` : ` (Car +${carAdv.advance} sq`) : (LANG==='ja' ? '（' : ' (');
-  const trainPart = trainAdv ? (LANG==='ja' ? `／電車 ${trainAdv.advance}マス）` : ` / Train +${trainAdv.advance} sq)`) : (LANG==='ja' ? '）' : ')');
-  document.getElementById('resultTitle').textContent = t('resultHeaderOnline')(periodDisplay(p.name), carCount, trainCount, carPart, trainPart);
 
-  const resultsHtml = turnLog.map(r=>{
-    const pl = players.find(pp=>pp.id===r.playerId) || {color:'#999'};
-    return resultRowHtml(pl.color, r.name, r.mode, r.advance, r.pos);
-  }).join('');
-  document.getElementById('resultList').innerHTML = resultsHtml;
-  renderOnlineReflectionButtons();
 
-  const allReflected = players.every(pl => {
-    const entry = turnLog.find(l=>l.playerId===pl.id);
-    return entry && entry.reflection;
-  });
-  const reflectedCount = turnLog.filter(l=>l.reflection).length;
 
-  const nextBtn = document.getElementById('nextBtn');
-  if(isHost){
-    nextBtn.classList.remove('hidden');
-    nextBtn.disabled = !allReflected;
-    nextBtn.textContent = allReflected
-      ? ((turn>=TOTAL_TURNS) ? t('hostViewFinalBtn') : t('hostNextTurnBtn'))
-      : t('waitingReflectionCount')({done:reflectedCount, total:players.length});
-    nextBtn.onclick = hostAdvanceTurn;
-  } else {
-    nextBtn.classList.add('hidden');
-  }
-  let waitHint = document.getElementById('resultWaitHint');
-  if(!waitHint){
-    waitHint = document.createElement('div');
-    waitHint.id = 'resultWaitHint';
-    waitHint.className = 'hint';
-    document.getElementById('resultCard').appendChild(waitHint);
-  }
-  waitHint.textContent = isHost ? '' : t('hostWillAdvance');
-}
 
-function hostAdvanceTurn(){
-  if(!isHost) return;
-  const turnLog = log.filter(l=>l.session===sessionNumber && l.turn===turn);
-  const allReflected = players.every(pl => {
-    const entry = turnLog.find(l=>l.playerId===pl.id);
-    return entry && entry.reflection;
-  });
-  if(!allReflected){ alert(t('alert_notAllReflected')); return; }
-  const nextTurnNum = turn + 1;
-  const updatePayload = (nextTurnNum > TOTAL_TURNS)
-    ? { phase:'ended' }
-    : { turn: nextTurnNum, phase:'choosing' };
-  roomRef.update(updatePayload).catch(err=>{
-    alert(t('alert_advanceFail')(err.message));
-  });
-}
 
-function renderOnlineChoiceGrid(){
-  const grid = document.getElementById('choiceGrid');
-  grid.innerHTML='';
-  players.forEach(pl=>{
-    const div = document.createElement('div');
-    div.className='p-choice';
-    const mine = (pl.id === myPlayerId);
-    const chosen = choices[pl.id];
-    if(mine){
-      div.innerHTML = `
-        <div class="pname"><span class="dot" style="background:${pl.color}"></span>${pl.name}${t('you')}</div>
-        <div class="modebtns">
-          <button class="modebtn car ${chosen==='C'?'sel':''}" onclick="pickOnline('C')">
-            <span style="font-size:40px; line-height:1;">🚗</span><span style="font-size:11px; font-weight:700; letter-spacing:0.5px;">CAR</span>
-          </button>
-          <button class="modebtn train ${chosen==='T'?'sel':''}" onclick="pickOnline('T')">
-            <span style="font-size:40px; line-height:1;">🚃</span><span style="font-size:11px; font-weight:700; letter-spacing:0.5px;">TRAIN</span>
-          </button>
-        </div>`;
-    } else {
-      div.innerHTML = `
-        <div class="pname"><span class="dot" style="background:${pl.color}"></span>${pl.name}</div>
-        <div class="hint">${chosen ? t('selectedMark') : (pl.connected ? t('choosingMark') : t('notJoinedMark'))}</div>`;
-    }
-    grid.appendChild(div);
-  });
-
-  const onlineControls = document.getElementById('onlineControls');
-  onlineControls.innerHTML = '';
-  const allChosen = players.every(pl => !!choices[pl.id]);
-  if(isHost){
-    const btn = document.createElement('button');
-    btn.className = 'primary';
-    btn.textContent = allChosen ? t('hostConfirmBtn')() : t('hostWaitingChoiceCount')({done:Object.keys(choices).length, total:players.length});
-    btn.disabled = !allChosen;
-    btn.onclick = hostResolveTurn;
-    onlineControls.appendChild(btn);
-    const hint = document.createElement('div');
-    hint.className = 'hint';
-    hint.style.width = '100%';
-    hint.textContent = allChosen ? t('everyoneReady') : t('waitEveryoneChoose');
-    onlineControls.appendChild(hint);
-  } else {
-    const hint = document.createElement('div');
-    hint.className = 'hint';
-    hint.textContent = t('hostWillConfirm');
-    onlineControls.appendChild(hint);
-  }
-}
-
-function pickOnline(mode){
-  if(myPlayerId===null || !roomRef) return;
-  roomRef.child('choices/'+myPlayerId).set(mode).catch(err=>{
-    alert(t('alert_sendChoiceFail')(err.message));
-  });
-}
-
-function hostResolveTurn(){
-  if(!isHost) return;
-  if(!players.every(pl => !!choices[pl.id])){ alert(t('alert_notAllChosen')); return; }
-  const p = periodOf(turn);
-  let carCount=0, trainCount=0;
-  players.forEach(pl=>{ if(choices[pl.id]==='C') carCount++; else if(choices[pl.id]==='T') trainCount++; });
-  const carAdvance = carAdvanceFor(p.name, players.length, carCount);
-  const trainAdvanceOnline = 4;
-  const newPlayers = players.map(pl=>({...pl}));
-  const newLog = [...log];
-
-  newPlayers.forEach(pl=>{
-    const mode = choices[pl.id];
-    if(!mode) return; // 未選択者はこのターンはスキップ（安全策）
-    let co2Turn, moneyTurn, nuisanceTurn, advance;
-    if(mode==='C'){
-      advance = carAdvance;
-      pl.pos += carAdvance;
-      co2Turn = 0.655; moneyTurn = 57; nuisanceTurn = marginalCongestionContribution(p.name, players.length, carCount);
-    } else {
-      advance = trainAdvanceOnline;
-      pl.pos += trainAdvanceOnline;
-      co2Turn = 0.140; moneyTurn = 200; nuisanceTurn = 0;
-    }
-    pl.co2 += co2Turn; pl.money += moneyTurn; pl.nuisance += nuisanceTurn;
-    newLog.push({
-      session:sessionNumber, turn, period:p.name, playerId:pl.id, name:pl.name, mode, advance,
-      carCount, trainCount, co2Turn, moneyTurn, nuisanceTurn,
-      co2Cum: pl.co2, moneyCum: pl.money, nuisanceCum: pl.nuisance, pos: pl.pos, reflection:''
-    });
-  });
-
-  roomRef.update({
-    players: newPlayers, log: newLog, choices: {},
-    phase: 'results'
-  }).catch(err=>{
-    alert(t('alert_updateFail')(err.message));
-  });
-}
-
-function onlineNewSession(){
-  if(!isHost){ alert(t('alert_hostOnly')); return; }
-  const resetPlayers = players.map(pl => ({...pl, pos:0, co2:0, money:0, nuisance:0}));
-  roomRef.update({
-    sessionNumber: sessionNumber+1, turn:1, choices:{}, players: resetPlayers, phase:'choosing'
-  }).then(()=>{
-    document.getElementById('screen-end').classList.add('hidden');
-    document.getElementById('screen-game').classList.remove('hidden');
-  }).catch(err=>{
-    alert(t('alert_newSessionFail')(err.message));
-  });
-}
 
 
 function changeCount(d){
@@ -1168,7 +1033,7 @@ function renderPlayerInputs(n){
   for(let i=0;i<n;i++){
     const row = document.createElement('div');
     row.className='player-setup-row';
-    row.innerHTML = `<div class="swatch" style="background:${COLORS[i]}"></div>
+    row.innerHTML = `${playerMarkHtml(i, 28)}
       <input type="text" placeholder="${t('playerNamePlaceholder')(i+1)}" id="pname${i}">`;
     box.appendChild(row);
   }
@@ -1176,7 +1041,7 @@ function renderPlayerInputs(n){
 function renderHostNameInput(){
   const box = document.getElementById('playerInputs');
   box.innerHTML = `<div class="player-setup-row">
-      <div class="swatch" style="background:${COLORS[0]}"></div>
+      ${playerMarkHtml(0, 28)}
       <input type="text" placeholder="${t('hostNamePlaceholder')}" id="pname0">
     </div>
     <div style="font-size:13px; color:#666; margin-top:6px;">${t('hostNameHint')}</div>`;
@@ -1185,35 +1050,413 @@ renderPlayerInputs(4);
 setMode('local');
 applyStaticText();
 
-function startGame(){
-  gameInProgress = true;
-  const n = parseInt(document.getElementById('countDisp').textContent);
-  players = [];
+
+
+// =====================================================================
+// ゲーム進行（ローカル版・オンライン版で共通）
+// isOnline で分岐するのは「データをどこに書き込むか」と「誰が操作できるか」だけ。
+// ルールの計算・画面の描画は1か所にまとめてあるので、ルール変更時はここだけ直せばよい。
+// =====================================================================
+
+// ---- 小さな共通ヘルパー ----
+function buildPlayers(n){
+  const list = [];
   for(let i=0;i<n;i++){
     const nameEl = document.getElementById('pname'+i);
-    players.push({
-      id:i, name:(nameEl.value.trim()||('P'+(i+1))), color:COLORS[i],
-      pos:0, co2:0, money:0, nuisance:0
-    });
+    const typedName = nameEl ? nameEl.value.trim() : '';
+    list.push({ id:i, name:(typedName || ('P'+(i+1))), color:colorOf(i), pos:0, co2:0, money:0, nuisance:0 });
   }
+  return list;
+}
+function resetPlayerStats(list){
+  return list.map(pl => ({...pl, pos:0, co2:0, money:0, nuisance:0}));
+}
+function currentTurnLog(){
+  return log.filter(l => l.session===sessionNumber && l.turn===turn);
+}
+// 今のターン・指定プレイヤーのログが log の何番目にあるか（無ければ -1）
+function turnEntryIndex(playerId){
+  for(let i=log.length-1; i>=0; i--){
+    const l = log[i];
+    if(l.session===sessionNumber && l.turn===turn && l.playerId===playerId) return i;
+  }
+  return -1;
+}
+function allChosen(){
+  return players.every(pl => !!choices[pl.id]);
+}
+function allReflected(){
+  const tl = currentTurnLog();
+  return players.every(pl => { const e = tl.find(l=>l.playerId===pl.id); return e && e.reflection; });
+}
+function showGameScreen(){
   document.getElementById('screen-setup').classList.add('hidden');
   document.getElementById('screen-game').classList.remove('hidden');
+  document.getElementById('localHint').classList.toggle('hidden', isOnline);
+  document.getElementById('localControls').classList.toggle('hidden', isOnline);
+  document.getElementById('onlineControls').classList.toggle('hidden', !isOnline);
+}
+function showRoomWaiting(){
+  document.getElementById('modeSwitchButtons').classList.add('hidden');
+  document.getElementById('hostSetupBox').classList.add('hidden');
+  document.getElementById('onlineJoinBox').classList.add('hidden');
+  document.getElementById('roomCodeDisplay').classList.remove('hidden');
+  document.getElementById('roomCodeText').textContent = roomCode;
+}
+
+// ---- ルールの計算（画面やFirebaseに触らない純粋な計算） ----
+// 全員の選択から、このターンの進行・CO2・出費・自他影響度を計算し、更新後のプレイヤーとログ行を返す
+function computeTurn(){
+  const p = periodOf(turn);
+  const carCount = players.filter(pl => choices[pl.id]==='C').length;
+  const trainCount = players.filter(pl => choices[pl.id]==='T').length;
+  const carAdvance = carAdvanceFor(p.name, players.length, carCount);
+  const newPlayers = players.map(pl => ({...pl}));
+  const entries = [];
+  newPlayers.forEach(pl=>{
+    const mode = choices[pl.id];
+    if(!mode) return; // 未選択者はこのターンはスキップ（安全策）
+    const advance = (mode==='C') ? carAdvance : TRAIN_ADVANCE;
+    const co2Turn = MODE_COST[mode].co2;
+    const moneyTurn = MODE_COST[mode].money;
+    const nuisanceTurn = (mode==='C') ? marginalCongestionContribution(p.name, players.length, carCount) : 0;
+    pl.pos += advance; pl.co2 += co2Turn; pl.money += moneyTurn; pl.nuisance += nuisanceTurn;
+    entries.push({
+      session:sessionNumber, turn, period:p.name, playerId:pl.id, name:pl.name, mode, advance,
+      carCount, trainCount, co2Turn, moneyTurn, nuisanceTurn,
+      co2Cum:pl.co2, moneyCum:pl.money, nuisanceCum:pl.nuisance, pos:pl.pos, reflection:'',
+      // 意思決定の記録（オンラインのみ。ローカルは測らないので空）
+      firstPickSec: (isOnline && decisions[pl.id]) ? decisions[pl.id].firstPickSec : null,
+      changeCount: (isOnline && decisions[pl.id]) ? decisions[pl.id].changes : null
+    });
+  });
+  return { players:newPlayers, entries };
+}
+
+// ---- ゲームの開始・ターン描画 ----
+function startGame(){
+  gameInProgress = true;
+  isOnline = false;
+  const n = parseInt(document.getElementById('countDisp').textContent);
+  players = buildPlayers(n);
+  choices = {};
+  phase = 'choosing';
+  showGameScreen();
   renderTurn();
 }
 
+// 今の phase に合わせて、選択カードか結果カードのどちらかを表示する
 function renderTurn(){
   const p = periodOf(turn);
   renderPeriodLabel(p);
   document.getElementById('turnLabel').textContent = `TURN ${turn} / ${TOTAL_TURNS}`;
-  document.getElementById('resultCard').classList.add('hidden');
-  document.getElementById('choiceCard').classList.remove('hidden');
-  document.getElementById('localControls').classList.remove('hidden');
-  document.getElementById('localHint').classList.remove('hidden');
-  choices = {};
+  if(phase === 'ended'){ showEnd(); return; }
   renderTracks();
+  const showResults = (phase === 'results');
+  document.getElementById('resultCard').classList.toggle('hidden', !showResults);
+  document.getElementById('choiceCard').classList.toggle('hidden', showResults);
+  if(showResults){
+    renderTurnResults(p);
+  } else {
+    renderChoiceGrid();
+    renderChoiceControls();
+  }
+}
+
+// ---- カード選択 ----
+// 文中やアイコン列に置く小さな車・電車アイコン。h は電車の高さ(px)。車は同じ縮尺で少し低くなる
+function modeIconHtml(mode, h){
+  const height = (mode === 'C') ? Math.round(h * 42 / 58) : h;
+  return `<img src="${MODE_IMG[mode]}" alt="${mode==='C'?'Car':'Train'}" style="height:${height}px; width:auto; vertical-align:-0.15em; display:inline-block;">`;
+}
+function modeButtonsHtml(playerId, chosen){
+  return `<div class="modebtns">
+      <button class="modebtn car ${chosen==='C'?'sel':''}" onclick="pick(${playerId},'C')" id="btnC${playerId}">
+        <span class="mode-icon"><img src="${MODE_IMG.C}" alt="" class="mode-img car"></span>
+        <span class="mode-label">Car</span>
+      </button>
+      <button class="modebtn train ${chosen==='T'?'sel':''}" onclick="pick(${playerId},'T')" id="btnT${playerId}">
+        <span class="mode-icon"><img src="${MODE_IMG.T}" alt="" class="mode-img train"></span>
+        <span class="mode-label">Train</span>
+      </button>
+    </div>`;
+}
+
+// ローカル：全員分のボタンを表示／オンライン：自分の分だけボタン、他の人は選択状況だけ表示
+function renderChoiceGrid(){
+  // オンライン：そのターンで自分の選択画面を初めて表示した時刻を記録（演出中なら演出が終わった時刻から数える）
+  const timerKey = `${sessionNumber}-${turn}`;
+  if(isOnline && myPlayerId !== null && phase === 'choosing' && (!myTurnTimer || myTurnTimer.key !== timerKey)){
+    myTurnTimer = { key: timerKey, shownAt: Math.max(performance.now(), window._overlayEndsAt || 0), firstSec: null, last: null, changes: 0 };
+  }
+  const grid = document.getElementById('choiceGrid');
+  grid.innerHTML='';
+  players.forEach(pl=>{
+    const div = document.createElement('div');
+    div.className='p-choice';
+    const chosen = choices[pl.id];
+    const canPick = !isOnline || pl.id === myPlayerId;
+    const nameHtml = `<div class="pname">${playerMarkHtml(pl.id, 18, pl.color)}${pl.name}${isOnline && canPick ? t('you') : ''}</div>`;
+    if(canPick){
+      div.innerHTML = nameHtml + modeButtonsHtml(pl.id, chosen);
+    } else {
+      div.innerHTML = nameHtml + `<div class="hint">${chosen ? t('selectedMark') : (pl.connected ? t('choosingMark') : t('notJoinedMark'))}</div>`;
+    }
+    grid.appendChild(div);
+  });
+}
+
+function pick(playerId, mode){
+  if(isOnline){
+    if(playerId !== myPlayerId || !roomRef) return; // 自分以外のカードは選べない
+    const updates = {};
+    updates['choices/'+playerId] = mode;
+    const tm = myTurnTimer;
+    if(tm && tm.key === `${sessionNumber}-${turn}`){
+      if(tm.firstSec === null){
+        tm.firstSec = Math.max(0, Math.round((performance.now() - tm.shownAt) / 100) / 10); // 0.1秒単位
+      } else if(tm.last !== mode){
+        tm.changes++; // 違うカードに押し直したときだけ数える（同じカードの押し直しは数えない）
+      }
+      tm.last = mode;
+      updates['decisions/'+playerId] = { firstPickSec: tm.firstSec, changes: tm.changes };
+    }
+    roomRef.update(updates).catch(err=>{
+      alert(t('alert_sendChoiceFail')(err.message));
+    });
+    return; // 画面の更新はFirebaseの変更通知(attachRoomListener)で行う
+  }
+  choices[playerId] = mode;
+  document.getElementById('btnC'+playerId).classList.toggle('sel', mode==='C');
+  document.getElementById('btnT'+playerId).classList.toggle('sel', mode==='T');
+  updateConfirmBtnState();
+}
+
+// 選択カード下のボタン類（ローカル：確定/リセット、オンライン：ホストだけ確定ボタン）
+function renderChoiceControls(){
+  if(!isOnline){ updateConfirmBtnState(); return; }
+  const onlineControls = document.getElementById('onlineControls');
+  onlineControls.innerHTML = '';
+  const ready = allChosen();
+  if(isHost){
+    const btn = document.createElement('button');
+    btn.className = 'primary';
+    btn.textContent = ready ? t('hostConfirmBtn')() : t('hostWaitingChoiceCount')({done:Object.keys(choices).length, total:players.length});
+    btn.disabled = !ready;
+    btn.onclick = resolveTurn;
+    onlineControls.appendChild(btn);
+  }
+  const hint = document.createElement('div');
+  hint.className = 'hint';
+  if(isHost){
+    hint.style.width = '100%';
+    hint.textContent = ready ? t('everyoneReady') : t('waitEveryoneChoose');
+  } else {
+    hint.textContent = t('hostWillConfirm');
+  }
+  onlineControls.appendChild(hint);
+}
+
+function updateConfirmBtnState(){
+  const confirmBtn = document.getElementById('confirmBtn');
+  if(!confirmBtn) return;
+  const ready = allChosen();
+  confirmBtn.disabled = !ready;
+  confirmBtn.textContent = ready ? t('confirmTurnBtn') : t('waitingChoiceCount')({done:Object.keys(choices).length, total:players.length});
+}
+
+function resetChoices(){
+  choices = {};
   renderChoiceGrid();
   updateConfirmBtnState();
 }
+
+// ---- ターンの確定 ----
+function resolveTurn(){
+  if(isOnline){
+    if(!isHost) return;
+    if(!allChosen()){ alert(t('alert_notAllChosen')); return; }
+    const res = computeTurn();
+    roomRef.update({ players:res.players, log:[...log, ...res.entries], choices:{}, decisions:null, phase:'results' }).catch(err=>{
+      alert(t('alert_updateFail')(err.message));
+    });
+    return; // 画面の更新はFirebaseの変更通知で行う
+  }
+  const missing = players.filter(pl=>!choices[pl.id]);
+  if(missing.length>0){
+    alert(t('alert_missingPlayers')(missing.map(p=>p.name).join('、')));
+    return;
+  }
+  const confirmBtn = document.getElementById('confirmBtn');
+  if(confirmBtn.disabled) return; // 二重確定防止
+  confirmBtn.disabled = true;
+  const res = computeTurn();
+  players = res.players;
+  log.push(...res.entries);
+  phase = 'results';
+  renderTurn();
+}
+
+// ---- 結果表示 ----
+function renderTurnResults(p){
+  const tl = currentTurnLog();
+  const carCount = tl.filter(l=>l.mode==='C').length;
+  const trainCount = tl.filter(l=>l.mode==='T').length;
+  if(isOnline){
+    const carAdv = tl.find(l=>l.mode==='C');
+    const trainAdv = tl.find(l=>l.mode==='T');
+    const carPart = carAdv ? (LANG==='ja' ? `（車 ${carAdv.advance}マス` : ` (Car +${carAdv.advance} sq`) : (LANG==='ja' ? '（' : ' (');
+    const trainPart = trainAdv ? (LANG==='ja' ? `／電車 ${trainAdv.advance}マス）` : ` / Train +${trainAdv.advance} sq)`) : (LANG==='ja' ? '）' : ')');
+    document.getElementById('resultTitle').textContent = t('resultHeaderOnline')(periodDisplay(p.name), carCount, trainCount, carPart, trainPart);
+  } else {
+    const carAdvance = carAdvanceFor(p.name, players.length, carCount);
+    document.getElementById('resultTitle').textContent = t('resultHeaderLocal')(periodDisplay(p.name), carCount, trainCount, carAdvance, TRAIN_ADVANCE);
+  }
+  document.getElementById('resultList').innerHTML = tl.map(r=>{
+    const pl = players.find(pp=>pp.id===r.playerId) || {color:'#999'};
+    return resultRowHtml(r.playerId, pl.color, r.name, r.mode, r.advance, r.pos);
+  }).join('');
+  renderReflectionButtons();
+  updateNextBtnState();
+
+  let waitHint = document.getElementById('resultWaitHint');
+  if(!waitHint){
+    waitHint = document.createElement('div');
+    waitHint.id = 'resultWaitHint';
+    waitHint.className = 'hint';
+    document.getElementById('resultCard').appendChild(waitHint);
+  }
+  waitHint.textContent = (isOnline && !isHost) ? t('hostWillAdvance') : '';
+}
+
+// ---- ターン終わりの振り返り（3段階：1=失敗した…／2=まぁ、こんなものか／3=成功！！） ----
+// labelKeyで言語ごとの文言を都度引く（言語切り替え時にも追随させるため固定文字列を持たない）
+const REFLECTION_OPTIONS = [
+  {value:'1', color:'#D9534F', labelKey:'reflectFail'},
+  {value:'2', color:'#E8C34A', labelKey:'reflectSoso'},
+  {value:'3', color:'#5CA83C', labelKey:'reflectSuccess'}
+];
+
+// 顔アイコン(SVG)を生成。value: 1(失敗)〜3(成功)
+function reflectFaceSvg(value){
+  const mouths = {
+    1: 'M 8 15 Q 12 10 16 15',
+    2: 'M 8 13 L 16 13',
+    3: 'M 7 13 Q 12 20 17 13'
+  };
+  return `<svg viewBox="0 0 24 24" width="56" height="56">
+    <circle cx="8" cy="9" r="1.6" fill="#5a4632"/>
+    <circle cx="16" cy="9" r="1.6" fill="#5a4632"/>
+    <path d="${mouths[Number(value)]}" stroke="#5a4632" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </svg>`;
+}
+
+// ローカル：全員分（名前付き）／オンライン：自分の分だけ表示
+function renderReflectionButtons(){
+  const el = document.getElementById('reflectionButtons');
+  if(!el) return;
+  const targets = isOnline ? players.filter(pl => pl.id === myPlayerId) : players;
+  el.innerHTML = targets.map(pl => {
+    const idx = turnEntryIndex(pl.id);
+    const currentVal = idx >= 0 ? log[idx].reflection : null;
+    const faces = `<div class="reflect-row">
+        ${REFLECTION_OPTIONS.map(opt => reflectionOptionHtml(pl.id, opt, currentVal, `pickReflection(${pl.id},'${opt.value}')`)).join('')}
+      </div>`;
+    if(isOnline) return faces;
+    return `
+    <div style="display:flex; flex-direction:column; align-items:center; gap:6px; min-width:90px;">
+      <div style="font-size:15px; font-weight:700; display:flex; align-items:center; gap:5px;">
+        ${playerMarkHtml(pl.id, 14, pl.color)}${pl.name}
+      </div>
+      ${faces}
+    </div>`;
+  }).join('');
+}
+
+function pickReflection(playerId, value){
+  playerId = Number(playerId);
+  const idx = turnEntryIndex(playerId);
+  if(idx < 0) return;
+  if(isOnline){
+    if(playerId !== myPlayerId) return;
+    // ログ全体ではなく自分の行の reflection だけを書き込む（同時に押されても他の人の回答を上書きしないため）
+    roomRef.child('log/'+idx+'/reflection').set(value).catch(err=>{ console.warn('振り返りの保存に失敗:', err); });
+  } else {
+    log[idx].reflection = value;
+  }
+  REFLECTION_OPTIONS.forEach(opt => {
+    const btn = document.getElementById(`reflect-${playerId}-${opt.value}`);
+    if(btn) btn.classList.toggle('sel', opt.value === value);
+  });
+  if(!isOnline) updateNextBtnState();
+}
+
+// 「次のターンへ」ボタン（ローカル：誰でも押せる／オンライン：ホストだけ表示）
+function updateNextBtnState(){
+  const nextBtn = document.getElementById('nextBtn');
+  if(!nextBtn) return;
+  if(isOnline && !isHost){ nextBtn.classList.add('hidden'); return; }
+  nextBtn.classList.remove('hidden');
+  const ready = allReflected();
+  const isLast = (turn >= TOTAL_TURNS);
+  const label = isOnline
+    ? (isLast ? t('hostViewFinalBtn') : t('hostNextTurnBtn'))
+    : (isLast ? t('viewFinalBtn') : t('nextTurnBtn'));
+  nextBtn.disabled = !ready;
+  nextBtn.textContent = ready ? label : t('waitingReflectionCount')({done:currentTurnLog().filter(l=>l.reflection).length, total:players.length});
+}
+
+// ---- 次のターン・セッション ----
+function nextTurn(){
+  if(isOnline && !isHost) return;
+  if(!allReflected()){ alert(isOnline ? t('alert_notAllReflected') : t('alert_needAllReflections')); return; }
+  const isLast = (turn >= TOTAL_TURNS);
+  if(isOnline){
+    roomRef.update(isLast ? { phase:'ended' } : { turn: turn+1, phase:'choosing' }).catch(err=>{
+      alert(t('alert_advanceFail')(err.message));
+    });
+    return;
+  }
+  if(isLast){ showEnd(); return; }
+  turn++;
+  choices = {};
+  phase = 'choosing';
+  renderTurn();
+}
+
+// 同じメンバーのまま成績だけリセットして次のセッションへ（ページはリロードしない）
+function newSession(){
+  if(isOnline){
+    if(!isHost){ alert(t('alert_hostOnly')); return; }
+    roomRef.update({
+      sessionNumber: sessionNumber+1, turn:1, choices:{}, decisions:null, players: resetPlayerStats(players), phase:'choosing'
+    }).then(()=>{
+      document.getElementById('screen-end').classList.add('hidden');
+      document.getElementById('screen-game').classList.remove('hidden');
+    }).catch(err=>{
+      alert(t('alert_newSessionFail')(err.message));
+    });
+    return;
+  }
+  sessionNumber++;
+  turn = 1;
+  choices = {};
+  phase = 'choosing';
+  players = resetPlayerStats(players);
+  document.getElementById('screen-end').classList.add('hidden');
+  document.getElementById('screen-game').classList.remove('hidden');
+  renderTurn();
+}
+
+let lastTrackScrollKey = null;
+// ウィンドウの大きさを変えたときは、1行あたりのマス数を計算し直してボードだけ描き直す
+let _resizeTimer = null;
+window.addEventListener('resize', ()=>{
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(()=>{
+    if(!document.getElementById('screen-game').classList.contains('hidden') && players.length){ renderTracks(); }
+  }, 200);
+});
 
 function renderTracks(){
   const el = document.getElementById('trackMain');
@@ -1304,8 +1547,9 @@ function renderTracks(){
       sq.appendChild(num);
       (bySquare[s]||[]).forEach(pl=>{
         const tok = document.createElement('div');
-        tok.className='token';
-        tok.style.background = pl.color;
+        tok.className='token' + (isStarPlayer(pl.id) ? ' star' : '');
+        if(isStarPlayer(pl.id)){ tok.innerHTML = playerMarkHtml(pl.id, '100%', pl.color); }
+        else { tok.style.background = pl.color; }
         tok.title = pl.name;
         sq.appendChild(tok);
       });
@@ -1316,201 +1560,33 @@ function renderTracks(){
     if(maxPos >= rowMin && maxPos <= rowMax){ leaderRowEl = rowEl; }
   });
 
-  // 駒が進んでも見失わないよう、一番進んでいる駒がある行まで自動スクロール
-  requestAnimationFrame(()=>{
-    if(leaderRowEl){
-      leaderRowEl.scrollIntoView({ behavior:'smooth', block:'center' });
-    }
-  });
-}
-
-function renderChoiceGrid(){
-  const grid = document.getElementById('choiceGrid');
-  grid.innerHTML='';
-  players.forEach(pl=>{
-    const div = document.createElement('div');
-    div.className='p-choice';
-    const chosen = choices[pl.id];
-    div.innerHTML = `
-      <div class="pname"><span class="dot" style="background:${pl.color}"></span>${pl.name}</div>
-      <div class="modebtns">
-        <button class="modebtn car ${chosen==='C'?'sel':''}" onclick="pick(${pl.id},'C')" id="btnC${pl.id}">
-          <span style="font-size:40px; line-height:1;">🚗</span>
-          <span style="font-size:11px; font-weight:700; letter-spacing:0.5px;">CAR</span>
-        </button>
-        <button class="modebtn train ${chosen==='T'?'sel':''}" onclick="pick(${pl.id},'T')" id="btnT${pl.id}">
-          <span style="font-size:40px; line-height:1;">🚃</span>
-          <span style="font-size:11px; font-weight:700; letter-spacing:0.5px;">TRAIN</span>
-        </button>
-      </div>`;
-    grid.appendChild(div);
-  });
-}
-
-function pick(id, mode){
-  choices[id]=mode;
-  const btnC = document.getElementById('btnC'+id);
-  const btnT = document.getElementById('btnT'+id);
-  btnC.classList.toggle('sel', mode==='C');
-  btnT.classList.toggle('sel', mode==='T');
-  updateConfirmBtnState();
-}
-
-function updateConfirmBtnState(){
-  const confirmBtn = document.getElementById('confirmBtn');
-  if(!confirmBtn) return;
-  const allChosen = players.every(pl => !!choices[pl.id]);
-  confirmBtn.disabled = !allChosen;
-  confirmBtn.textContent = allChosen ? t('confirmTurnBtn') : t('waitingChoiceCount')({done:Object.keys(choices).length, total:players.length});
-}
-
-function resetChoices(){
-  choices = {};
-  renderChoiceGrid();
-  updateConfirmBtnState();
-}
-
-function undoTurn(){
-  // このターン分のログを取り消して、選択からやり直せる状態に戻す
-  const thisTurnEntries = log.filter(l=>l.turn===turn && l.session===sessionNumber);
-  if(thisTurnEntries.length===0) return;
-  thisTurnEntries.forEach(entry=>{
-    const pl = players.find(p=>p.id===entry.playerId);
-    if(!pl) return;
-    pl.pos -= entry.advance;
-    pl.co2 -= entry.co2Turn;
-    pl.money -= entry.moneyTurn;
-    pl.nuisance -= entry.nuisanceTurn;
-  });
-  log = log.filter(l=>!(l.turn===turn && l.session===sessionNumber));
-  document.getElementById('resultCard').classList.add('hidden');
-  document.getElementById('choiceCard').classList.remove('hidden');
-  choices = {};
-  renderTracks();
-  renderChoiceGrid();
-  updateConfirmBtnState();
-}
-
-function resolveTurn(){
-  const missing = players.filter(pl=>!choices[pl.id]);
-  if(missing.length>0){
-    alert(t('alert_missingPlayers')(missing.map(p=>p.name).join('、')));
-    return;
-  }
-  const confirmBtn = document.getElementById('confirmBtn');
-  if(confirmBtn.disabled) return; // 二重確定防止
-  confirmBtn.disabled = true;
-
-  const p = periodOf(turn);
-  const carCount = Object.values(choices).filter(c=>c==='C').length;
-  const trainCount = Object.values(choices).filter(c=>c==='T').length;
-
-  const carAdvance = carAdvanceFor(p.name, players.length, carCount);
-  const trainAdvance = 4;
-
-  let resultsHtml='';
-  players.forEach(pl=>{
-    const mode = choices[pl.id];
-    let co2Turn, moneyTurn, nuisanceTurn, advance;
-    if(mode==='C'){
-      advance = carAdvance;
-      pl.pos += carAdvance;
-      co2Turn = 0.655; moneyTurn = 57; nuisanceTurn = marginalCongestionContribution(p.name, players.length, carCount);
-      pl.co2 += co2Turn; pl.money += moneyTurn; pl.nuisance += nuisanceTurn;
-    } else {
-      advance = trainAdvance;
-      pl.pos += trainAdvance;
-      co2Turn = 0.140; moneyTurn = 200; nuisanceTurn = 0;
-      pl.co2 += co2Turn; pl.money += moneyTurn;
-    }
-    log.push({
-      session:sessionNumber, turn, period:p.name, playerId:pl.id, name:pl.name, mode, advance,
-      carCount, trainCount, co2Turn, moneyTurn, nuisanceTurn,
-      co2Cum:pl.co2, moneyCum:pl.money, nuisanceCum:pl.nuisance,
-      pos:pl.pos, reflection:''
+  // 駒が進んでも見失わないよう、一番進んでいる駒がある行までボード内だけスクロールする。
+  // ページ全体は動かさない（以前は scrollIntoView でページごと動き、下を見ていても上に戻されていた）。
+  // また、同じターン・同じ場面の再描画（他の人の選択の通知など）ではスクロールしない。
+  const scrollKey = `${sessionNumber}-${turn}-${phase}`;
+  if(leaderRowEl && scrollKey !== lastTrackScrollKey){
+    lastTrackScrollKey = scrollKey;
+    requestAnimationFrame(()=>{
+      const target = leaderRowEl.offsetTop - (el.clientHeight - leaderRowEl.offsetHeight) / 2;
+      el.scrollTo({ top: Math.max(0, target), behavior:'smooth' });
     });
-    resultsHtml += resultRowHtml(pl.color, pl.name, mode, advance, pl.pos);
-  });
-
-  document.getElementById('resultTitle').textContent =
-    t('resultHeaderLocal')(periodDisplay(p.name), carCount, trainCount, carAdvance, trainAdvance);
-  document.getElementById('resultList').innerHTML = resultsHtml;
-  document.getElementById('resultCard').classList.remove('hidden');
-  renderTracks();
-  renderReflectionButtons();
-  updateNextBtnState();
-  // 確定後は「このターンの選択」カード全体を隠し、結果だけに注目させる
-  document.getElementById('choiceCard').classList.add('hidden');
+  }
 }
 
-// ターン終わりのプチ振り返り（3段階：1=失敗した…／2=まぁ、こんなものか／3=成功！！）
-// labelKeyで言語ごとの文言を都度引く（言語切り替え時にも追随させるため固定文字列を持たない）
-const REFLECTION_OPTIONS = [
-  {value:'1', color:'#D9534F', labelKey:'reflectFail'},
-  {value:'2', color:'#E8C34A', labelKey:'reflectSoso'},
-  {value:'3', color:'#5CA83C', labelKey:'reflectSuccess'}
-];
 
-// 5段階の顔アイコン(SVG)を生成。value: 1(悪い)〜5(良い)
-function reflectFaceSvg(value){
-  const v = Number(value);
-  // 口の形を悪い(への字)〜良い(にっこり)まで3段階で用意
-  const mouths = {
-    1: 'M 8 15 Q 12 10 16 15',
-    2: 'M 8 13 L 16 13',
-    3: 'M 7 13 Q 12 20 17 13'
-  };
-  return `<svg viewBox="0 0 24 24" width="56" height="56">
-    <circle cx="8" cy="9" r="1.6" fill="#5a4632"/>
-    <circle cx="16" cy="9" r="1.6" fill="#5a4632"/>
-    <path d="${mouths[v]}" stroke="#5a4632" stroke-width="2" fill="none" stroke-linecap="round"/>
-  </svg>`;
+
+
+
+
+
+
+
+
+// グラフの棒の塗り。P5〜P8（星の駒）はP1〜P4と同じ色なので、白い斜線を入れて見分けられるようにする
+function barFillBackground(pl){
+  if(!isStarPlayer(pl.id)) return pl.color;
+  return `repeating-linear-gradient(135deg, ${pl.color} 0 6px, rgba(255,255,255,0.75) 6px 10px), ${pl.color}`;
 }
-
-function renderReflectionButtons(){
-  const el = document.getElementById('reflectionButtons');
-  if(!el) return;
-  el.innerHTML = players.map(pl => {
-    const entry = log.slice().reverse().find(l => l.session===sessionNumber && l.turn===turn && l.playerId===pl.id);
-    const currentVal = entry ? entry.reflection : null;
-    return `
-    <div style="display:flex; flex-direction:column; align-items:center; gap:6px; min-width:90px;">
-      <div style="font-size:13px; font-weight:700; display:flex; align-items:center; gap:4px;">
-        <span class="dot" style="background:${pl.color}; width:10px; height:10px; border-radius:50%; display:inline-block;"></span>${pl.name}
-      </div>
-      <div style="display:flex; gap:28px;">
-        ${REFLECTION_OPTIONS.map(opt => reflectionOptionHtml(pl.id, opt, currentVal, `pickReflection('${pl.id}','${opt.value}')`)).join('')}
-      </div>
-    </div>
-  `;
-  }).join('');
-}
-
-function pickReflection(playerId, value){
-  playerId = Number(playerId);
-  // 同じターン・同じプレイヤーのログを見つけて記録
-  const entry = log.slice().reverse().find(l => l.session===sessionNumber && l.turn===turn && l.playerId===playerId);
-  if(entry) entry.reflection = value;
-  REFLECTION_OPTIONS.forEach(opt => {
-    const btn = document.getElementById(`reflect-${playerId}-${opt.value}`);
-    if(btn) btn.classList.toggle('sel', opt.value === value);
-  });
-  updateNextBtnState();
-}
-
-function updateNextBtnState(){
-  const nextBtn = document.getElementById('nextBtn');
-  if(!nextBtn || isOnline) return; // オンラインは別関数(hostAdvanceTurn側)で制御
-  const sessLogNow = log.filter(l=>l.session===sessionNumber && l.turn===turn);
-  const allAnswered = players.every(pl=>{
-    const entry = sessLogNow.find(l=>l.playerId===pl.id);
-    return entry && entry.reflection;
-  });
-  nextBtn.disabled = !allAnswered;
-  const baseLabel = (turn>=TOTAL_TURNS) ? t('viewFinalBtn') : t('nextTurnBtn');
-  nextBtn.textContent = allAnswered ? baseLabel : t('waitingReflectionCount')({done:sessLogNow.filter(l=>l.reflection).length, total:players.length});
-}
-
 function renderChart(elId, arr, getter, unit, fmt){
   const el = document.getElementById(elId);
   const max = Math.max(1, ...arr.map(getter));
@@ -1518,37 +1594,27 @@ function renderChart(elId, arr, getter, unit, fmt){
     const v = getter(pl);
     const pct = (v/max*100).toFixed(1);
     return `<div class="bar-row">
-      <div class="bar-label">${pl.name}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${pl.color}"></div></div>
+      <div class="bar-label">${playerMarkHtml(pl.id, 14, pl.color)}<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${pl.name}</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${barFillBackground(pl)}"></div></div>
       <div class="bar-val">${fmt(v)}${unit}</div>
     </div>`;
   }).join('');
 }
 
-function nextTurn(){
-  if(!isOnline){
-    const sessLogNow = log.filter(l=>l.session===sessionNumber && l.turn===turn);
-    const allAnswered = players.every(pl=>{
-      const entry = sessLogNow.find(l=>l.playerId===pl.id);
-      return entry && entry.reflection;
-    });
-    if(!allAnswered){ alert(t('alert_needAllReflections')); return; }
-  }
-  if(turn>=TOTAL_TURNS){
-    showEnd();
-    return;
-  }
-  turn++;
-  renderTurn();
-}
 
-function downloadCSV(){
+function downloadExcel(){
   // ①ターンログ：1行＝1プレイヤー×1ターン（全セッション分）
   const turnRows = log.map(r=>({
     セッション:r.session, ターン:r.turn, 時間帯:r.period, プレイヤー番号:r.playerId+1, 名前:r.name, 選択:r.mode,
     進行マス数_マス:r.advance, 車選択人数_人:r.carCount, 電車選択人数_人:r.trainCount,
-    CO2_kg:r.co2Turn, 出費_円:r.moneyTurn, 現在地_マス:r.pos, 振り返り:r.reflection||''
+    CO2_kg:r.co2Turn, 出費_円:r.moneyTurn, 現在地_マス:r.pos, 振り返り:r.reflection||'',
+    選択までの時間_秒:(r.firstPickSec ?? ''), 選び直し回数_回:(r.changeCount ?? '')
   }));
+  // 意思決定の記録の平均（記録のある行だけで計算。ローカルのみのデータなら空欄）
+  const avgOf = (rows, key) => {
+    const v = rows.map(r=>r[key]).filter(x => x !== null && x !== undefined);
+    return v.length ? Number((v.reduce((s,x)=>s+x,0) / v.length).toFixed(2)) : '';
+  };
 
   // ②プレイヤーサマリ：1行＝1セッション×1プレイヤー（最終結果）
   const sessionPlayerKeys = [...new Set(log.map(l=>l.session+'-'+l.playerId))];
@@ -1562,7 +1628,9 @@ function downloadCSV(){
       電車回数_回:entries.filter(l=>l.mode==='T').length,
       CO2合計_kg:Number(last.co2Cum.toFixed(1)),
       出費合計_円:last.moneyCum,
-      最終位置_マス:last.pos
+      最終位置_マス:last.pos,
+      平均選択時間_秒:avgOf(entries, 'firstPickSec'),
+      平均選び直し回数_回:avgOf(entries, 'changeCount')
     };
   });
 
@@ -1584,7 +1652,9 @@ function downloadCSV(){
       平均CO2_kg:Number((rows.reduce((s,r)=>s+r.CO2合計_kg,0)/n).toFixed(2)),
       平均出費_円:Math.round(rows.reduce((s,r)=>s+r.出費合計_円,0)/n),
       平均到達マス数:Number((rows.reduce((s,r)=>s+r.最終位置_マス,0)/n).toFixed(1)),
-      振り返り平均値_1_2_3:reflectAvgSession
+      振り返り平均値_1_2_3:reflectAvgSession,
+      平均選択時間_秒:avgOf(log.filter(l=>l.session===sess), 'firstPickSec'),
+      平均選び直し回数_回:avgOf(log.filter(l=>l.session===sess), 'changeCount')
     };
   });
 
@@ -1605,7 +1675,7 @@ function downloadCSV(){
     }
     if(totalTurns===0) maxStreak = 0;
 
-    const trainAdvanceFixed = 4;
+    const trainAdvanceFixed = TRAIN_ADVANCE;
     // 各ターンで「得な選択」だったかどうか（客観的にどちらが多く進めたか）
     const betterFlags = entries.map(e=>{
       const carAdv = carAdvanceFor(e.period, players.length, e.carCount);
@@ -1617,7 +1687,7 @@ function downloadCSV(){
 
     const nuisanceSum = entries.reduce((s,e)=>s+(e.nuisanceTurn||0), 0);
 
-    // 振り返り（3択：1=失敗した…／3=まぁ、こんなものか／5=成功！！）の集計
+    // 振り返り（3択：1=失敗した…／2=まぁ、こんなものか／3=成功！！）の集計
     const reflectedEntries = entries.filter(e=>e.reflection);
     const reflectAvg = reflectedEntries.length
       ? Number((reflectedEntries.reduce((s,e)=>s+Number(e.reflection),0) / reflectedEntries.length).toFixed(2))
@@ -1658,6 +1728,21 @@ function downloadCSV(){
   XLSX.writeFile(wb, 'sugoroku_' + new Date().toISOString().slice(0,16).replace(/[:T]/g,'') + '.xlsx');
 }
 
+// 最終画面を開いたときに1位を大きく発表する（セッションごとに1回だけ。言語切り替えの再描画では出さない）
+let lastWinnerShownSession = null;
+function showWinnerOverlay(winners){
+  if(lastWinnerShownSession === sessionNumber || !winners.length) return;
+  lastWinnerShownSession = sessionNumber;
+  const overlay = document.getElementById('winnerOverlay');
+  if(!overlay) return;
+  document.getElementById('winnerOverlayLabel').textContent = t('winnerLabel');
+  document.getElementById('winnerOverlayNames').innerHTML = winners.map(w =>
+    `<span style="display:inline-flex; align-items:center; gap:8px; margin:0 10px;">${playerMarkHtml(w.id, 30, w.color)}${w.name}</span>`).join('');
+  overlay.classList.add('show');
+  clearTimeout(window._winnerOverlayTimer);
+  window._winnerOverlayTimer = setTimeout(()=>{ overlay.classList.remove('show'); }, 3000);
+}
+
 function showEnd(){
   document.getElementById('screen-game').classList.add('hidden');
   document.getElementById('screen-end').classList.remove('hidden');
@@ -1666,28 +1751,30 @@ function showEnd(){
   const setupReplayBtn = document.getElementById('setupReplayBtn');
   if(isOnline){
     replayBtn.textContent = isHost ? t('replayHost')(sessionNumber+1) : t('replayWaitHost');
-    replayBtn.onclick = isHost ? onlineNewSession : null;
     replayBtn.disabled = !isHost;
     if(setupReplayBtn) setupReplayBtn.classList.add('hidden');
   } else {
     replayBtn.textContent = t('replayLocal')(sessionNumber+1);
-    replayBtn.onclick = newSession;
     replayBtn.disabled = false;
     if(setupReplayBtn) setupReplayBtn.classList.remove('hidden');
   }
   const ranked = [...players].sort((a,b)=>b.pos-a.pos);
   const sessLog = log.filter(l=>l.session===sessionNumber);
+  // 同じマス数なら同じ順位にする（1位が複数いれば全員1位）
+  const rankOf = pl => 1 + players.filter(o => o.pos > pl.pos).length;
+  const winners = ranked.filter(pl => rankOf(pl) === 1);
+  showWinnerOverlay(winners);
   document.getElementById('endRanking').innerHTML = ranked.map((pl,i)=>{
     const entries = sessLog.filter(l=>l.playerId===pl.id).sort((a,b)=>a.turn-b.turn);
     const icons = entries.map(e=>`
       <span style="display:inline-flex; flex-direction:column; align-items:center; margin-right:6px; flex:none;">
-        <span style="font-size:22px;">${e.mode==='C'?'🚗':'🚃'}</span>
+        <span style="height:26px; display:flex; align-items:flex-end;">${modeIconHtml(e.mode, 26)}</span>
         <span style="font-size:10px; color:#8a8e93;">+${e.advance}</span>
       </span>`).join('');
     return `
-    <div class="rank-card">
-      <div class="rank-num disp">${i+1}</div>
-      <span class="dot" style="background:${pl.color}"></span>
+    <div class="rank-card ${rankOf(pl)===1 ? 'winner' : ''}">
+      <div class="rank-num disp">${rankOf(pl)===1 ? '👑' : rankOf(pl)}</div>
+      ${playerMarkHtml(pl.id, 18, pl.color)}
       <div class="rank-name">${pl.name}</div>
       <div class="rank-icons">${icons}</div>
       <div class="rank-stats">
@@ -1711,16 +1798,6 @@ function showEnd(){
     </div>`;
 }
 
-function newSession(){
-  // ページはリロードしない：同じメンバー構成のまま統計だけリセットして、次のセッションへ直行する
-  sessionNumber++;
-  turn = 1;
-  choices = {};
-  players = players.map(pl => ({...pl, pos:0, co2:0, money:0, nuisance:0}));
-  document.getElementById('screen-end').classList.add('hidden');
-  document.getElementById('screen-game').classList.remove('hidden');
-  renderTurn();
-}
 
 function newSessionWithSetup(){
   // メンバー構成を変えたいとき用：設定画面に戻ってから次のセッションを始める
@@ -1728,6 +1805,7 @@ function newSessionWithSetup(){
   turn = 1;
   players = [];
   choices = {};
+  phase = 'choosing';
   document.getElementById('screen-end').classList.add('hidden');
   document.getElementById('screen-setup').classList.remove('hidden');
 }
