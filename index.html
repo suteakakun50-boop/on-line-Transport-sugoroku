@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="pageTitleEl">オンライン版交通すごろく</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Barlow:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root{
@@ -148,7 +148,8 @@
   .mode-img{display:block; height:auto;}
   .mode-img.train{height:58px;}
   .mode-img.car{height:42px;}
-  .mode-label{font-family:'Oswald',sans-serif; font-size:18px; font-weight:600; color:#111; letter-spacing:0.02em; line-height:1.1; margin-top:4px;}
+  /* Bahnschrift はWindowsに入っているフォント。入っていない端末（Mac・iPhone・Androidなど）では形の近い Barlow で表示する */
+  .mode-label{font-family:'Bahnschrift','Barlow',sans-serif; font-size:18px; font-weight:600; color:#111; letter-spacing:0.01em; line-height:1.1; margin-top:4px;}
   .modebtn{transition:background 0.15s, border-color 0.15s, box-shadow 0.15s;}
   .modebtn.car.sel{background:#FFEDE5; border-color:#FA4400; box-shadow:0 0 0 2px #FA4400 inset;}
   .modebtn.train.sel{background:#E6F2E9; border-color:#116927; box-shadow:0 0 0 2px #116927 inset;}
