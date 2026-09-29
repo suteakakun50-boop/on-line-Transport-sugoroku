@@ -816,8 +816,9 @@ window.addEventListener('popstate', function(){
     armBackGuard();
   }
 });
-document.addEventListener('click', armBackGuard, true);
-document.addEventListener('touchend', armBackGuard, true);
+// バブリング段階で登録：「ゲーム開始」を押したタップの処理が終わった後（ゲーム中になった後）に積めるようにする
+document.addEventListener('click', armBackGuard);
+document.addEventListener('touchend', armBackGuard);
 let turn = 1;
 let sessionNumber = 1; // 「もう一度プレイする」でインクリメント。複数回プレイの比較用にログには全セッション分残す
 let choices = {}; // playerId -> 'C' or 'T'
@@ -1117,6 +1118,7 @@ function allReflected(){
   return players.every(pl => { const e = tl.find(l=>l.playerId===pl.id); return e && e.reflection; });
 }
 function showGameScreen(){
+  armBackGuard(); // ゲーム画面に切り替わった時点で戻る操作の確認を有効にする（参加者はタップしていなくても）
   document.getElementById('screen-setup').classList.add('hidden');
   document.getElementById('screen-game').classList.remove('hidden');
   document.getElementById('localHint').classList.toggle('hidden', isOnline);
