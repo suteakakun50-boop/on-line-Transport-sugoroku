@@ -107,8 +107,6 @@
   /* ---- スマホ(幅480px以下)向け調整：マスとターン表示を画面に収まりやすくする ---- */
   @media (max-width: 480px){
     .sq{ width:56px; height:56px; }
-    .token{ width:20px; height:20px; }
-    .token.star{ width:26px; height:26px; }
     .pt-sub{ font-size:28px; }
     .winner-overlay .pt-label{ font-size:32px; }
     .winner-names{ font-size:24px; }
@@ -202,6 +200,10 @@
   .hidden{display:none !important;}
   /* スマホ向けの追加調整（通常のスタイルより後に書いて確実に上書きする） */
   @media (max-width: 480px){
+    /* 駒：マスが小さいので、同じマスに何人いても枠内に収まるよう少し重ねて並べる */
+    .sq{ gap:0; padding:3px; }
+    .token{ width:22px; height:22px; margin:-4px; border-width:2px; }
+    .token.star{ width:27px; height:27px; margin:-6px; }
     /* 振り返りの顔ボタン：3つ並べても画面幅に収まるよう小さくする */
     .reflect-row{ gap:8px; }
     .reflect-btn{ width:68px; height:68px; }
@@ -401,6 +403,7 @@ const I18N = {
     alert_roomFull: 'この部屋はすでに満員です',
     joinedAs: name => `あなたは「${name}」として参加しました`,
     finalTurn: '最終ターン',
+    confirmLeave: 'ゲームの途中です。このページを離れると、ゲームを続けられなくなる場合があります。本当に戻りますか？',
     winnerLabel: '1位',
     displaySize: pct => `表示 ${pct}%`,
     playerCountTitle: '① 参加人数',
@@ -504,6 +507,7 @@ const I18N = {
     alert_roomFull: 'This room is already full',
     joinedAs: name => `You joined as "${name}"`,
     finalTurn: 'FINAL TURN',
+    confirmLeave: 'A game is in progress. If you leave this page, you may not be able to continue. Do you really want to go back?',
     winnerLabel: '1st place',
     displaySize: pct => `Size ${pct}%`,
     playerCountTitle: '① Number of players',
@@ -792,6 +796,28 @@ window.addEventListener('beforeunload', function(e){
   e.preventDefault();
   e.returnValue = ''; // Chrome等で確認ダイアログを出すために必要
 });
+
+// ---- 戻る操作の防止（スマホのスワイプ・戻るボタン対策）----
+// スマホでは上の beforeunload が働かないことが多いので、履歴に「見えない1ページ」を積んでおき、
+// 戻る操作をされたらその1ページ分だけ戻ったところで確認を出す。「キャンセル」ならその場にとどまる。
+// ※ブラウザによっては操作(タップ)なしに積んだ履歴を無視するため、タップのたびに積み直しておく。
+let backGuardArmed = false;
+function armBackGuard(){
+  if(!gameInProgress || backGuardArmed) return;
+  try { history.pushState({ sugorokuGuard: true }, ''); backGuardArmed = true; } catch(e){}
+}
+window.addEventListener('popstate', function(){
+  if(!gameInProgress || !backGuardArmed) return;
+  backGuardArmed = false;
+  if(confirm(t('confirmLeave'))){
+    gameInProgress = false; // 確認済みなので beforeunload の確認は出さない
+    history.back();
+  } else {
+    armBackGuard();
+  }
+});
+document.addEventListener('click', armBackGuard, true);
+document.addEventListener('touchend', armBackGuard, true);
 let turn = 1;
 let sessionNumber = 1; // 「もう一度プレイする」でインクリメント。複数回プレイの比較用にログには全セッション分残す
 let choices = {}; // playerId -> 'C' or 'T'
