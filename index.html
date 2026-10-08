@@ -398,7 +398,9 @@ const I18N = {
     enterCode: 'ルームコードとあなたの名前を入力',
     codePlaceholder: '例：1234',
     searchCode: '参加する',
-    joinNamePlaceholder: 'あなたの名前（任意）',
+    joinNamePlaceholder: 'あなたの名前（必須）',
+    alert_nameRequired: '名前を入力してください',
+    confirmLeaveRoom: 'ルームに参加中です。このページを離れると、ルームから抜けてしまう場合があります。本当に戻りますか？',
     alert_roomNotFound: 'そのルームコードの部屋が見つかりません。コードを確認してください',
     alert_roomFull: 'この部屋はすでに満員です',
     joinedAs: name => `あなたは「${name}」として参加しました`,
@@ -435,7 +437,7 @@ const I18N = {
     replayHost: sess => `【ホスト】もう一度プレイする（セッション${sess}）`,
     replayWaitHost: 'ホストの再戦を待っています',
     playerNamePlaceholder: i => `プレイヤー${i}`,
-    hostNamePlaceholder: 'あなたの名前（ホスト）',
+    hostNamePlaceholder: 'あなたの名前（ホスト・必須）',
     hostNameHint: '他の参加者は、ルームに参加するときにそれぞれ自分の名前を入力します',
     notJoined: '（未参加）',
     you: '（あなた）',
@@ -502,7 +504,9 @@ const I18N = {
     enterCode: 'Enter the room code and your name',
     codePlaceholder: 'e.g. 1234',
     searchCode: 'Join',
-    joinNamePlaceholder: 'Your name (optional)',
+    joinNamePlaceholder: 'Your name (required)',
+    alert_nameRequired: 'Please enter your name',
+    confirmLeaveRoom: 'You are in a room. If you leave this page, you may be removed from the room. Do you really want to go back?',
     alert_roomNotFound: 'No room was found with that code. Please check the code',
     alert_roomFull: 'This room is already full',
     joinedAs: name => `You joined as "${name}"`,
@@ -539,7 +543,7 @@ const I18N = {
     replayHost: sess => `[Host] Play again (Session ${sess})`,
     replayWaitHost: 'Waiting for the host to start a rematch',
     playerNamePlaceholder: i => `Player ${i}`,
-    hostNamePlaceholder: 'Your name (host)',
+    hostNamePlaceholder: 'Your name (host, required)',
     hostNameHint: 'Other participants will each enter their own name when they join the room',
     notJoined: '(not joined)',
     you: '(You)',
@@ -791,8 +795,10 @@ function periodOf(turn){
 
 let players = [];
 let gameInProgress = false; // ゲーム開始後、ブラウザの戻る/閉じるで離脱確認を出すためのフラグ
+let inRoom = false;         // オンラインでルームを作った・参加した後（ゲーム開始前の待機中も含む）
+function shouldGuardLeave(){ return gameInProgress || inRoom; }
 window.addEventListener('beforeunload', function(e){
-  if(!gameInProgress) return;
+  if(!shouldGuardLeave()) return;
   e.preventDefault();
   e.returnValue = ''; // Chrome等で確認ダイアログを出すために必要
 });
@@ -803,14 +809,15 @@ window.addEventListener('beforeunload', function(e){
 // ※ブラウザによっては操作(タップ)なしに積んだ履歴を無視するため、タップのたびに積み直しておく。
 let backGuardArmed = false;
 function armBackGuard(){
-  if(!gameInProgress || backGuardArmed) return;
+  if(!shouldGuardLeave() || backGuardArmed) return;
   try { history.pushState({ sugorokuGuard: true }, ''); backGuardArmed = true; } catch(e){}
 }
 window.addEventListener('popstate', function(){
-  if(!gameInProgress || !backGuardArmed) return;
+  if(!shouldGuardLeave() || !backGuardArmed) return;
   backGuardArmed = false;
-  if(confirm(t('confirmLeave'))){
-    gameInProgress = false; // 確認済みなので beforeunload の確認は出さない
+  // ゲーム中とルームでの待機中で、確認の文言を変える
+  if(confirm(gameInProgress ? t('confirmLeave') : t('confirmLeaveRoom'))){
+    gameInProgress = false; inRoom = false; // 確認済みなので beforeunload の確認は出さない
     history.back();
   } else {
     armBackGuard();
@@ -859,6 +866,8 @@ function genRoomCode(){
 
 function createRoom(){
   if(!firebaseReady){ alert(t('alert_firebaseFail')); return; }
+  const hostNameEl = document.getElementById('pname0');
+  if(!hostNameEl || !hostNameEl.value.trim()){ alert(t('alert_nameRequired')); if(hostNameEl) hostNameEl.focus(); return; } // 名前は必須
   const n = parseInt(document.getElementById('countDisp').textContent);
   const newPlayers = buildPlayers(n).map(pl => ({...pl, connected:(pl.id===0)})); // ホスト(P1)だけ参加済み
   roomCode = genRoomCode();
@@ -920,6 +929,7 @@ function joinRoom(){
   const code = document.getElementById('joinCodeInput').value.trim();
   if(!code) return;
   const typedName = document.getElementById('joinNameInput').value.trim();
+  if(!typedName){ alert(t('alert_nameRequired')); document.getElementById('joinNameInput').focus(); return; } // 名前は必須
   const joinBtn = document.getElementById('btn_searchCode');
   joinBtn.disabled = true; // 通信中の連打防止
   const restore = () => { joinBtn.disabled = false; };
@@ -933,7 +943,7 @@ function joinRoom(){
       const id = freeIds[k];
       ref.child('players/'+id+'/connected').transaction(cur => cur ? undefined : true).then(res=>{
         if(!res.committed){ tryClaim(k+1); return; } // 他の人が先に取った枠なら次の枠へ
-        const finalName = typedName || data.players[id].name || ('P'+(id+1));
+        const finalName = typedName;
         return ref.child('players/'+id).update({ name: finalName }).then(()=>{
           roomCode = code; myPlayerId = id; isOnline = true; isHost = false;
           roomRef = ref;
@@ -1126,6 +1136,8 @@ function showGameScreen(){
   document.getElementById('onlineControls').classList.toggle('hidden', !isOnline);
 }
 function showRoomWaiting(){
+  inRoom = true;   // ルームを作った・参加した時点から、戻る操作で確認を出す
+  armBackGuard();
   document.getElementById('modeSwitchButtons').classList.add('hidden');
   document.getElementById('hostSetupBox').classList.add('hidden');
   document.getElementById('onlineJoinBox').classList.add('hidden');
