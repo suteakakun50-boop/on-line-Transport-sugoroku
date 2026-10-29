@@ -6,7 +6,7 @@
 <title id="pageTitleEl">オンライン版交通すごろく</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Barlow:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
   :root{
     --paper:#F4F2EC;
@@ -265,7 +265,7 @@
       <div style="font-weight:700; margin-bottom:8px; font-size:16px;" id="txt_enterCode">ルームコードを入力</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
         <input type="text" id="joinCodeInput" placeholder="例：1234" inputmode="numeric" style="padding:8px; flex:0 0 140px; width:140px; font-size:16px;">
-        <input type="text" id="joinNameInput" placeholder="あなたの名前（任意）" style="padding:8px; flex:1 1 180px; min-width:0; font-size:16px;">
+        <input type="text" id="joinNameInput" placeholder="あなたの名前（必須）" style="padding:8px; flex:1 1 180px; min-width:0; font-size:16px;">
         <button class="primary" id="btn_searchCode" onclick="joinRoom()">参加する</button>
       </div>
     </div>
@@ -410,6 +410,7 @@ const I18N = {
     displaySize: pct => `表示 ${pct}%`,
     playerCountTitle: '① 参加人数',
     playerNameTitle: '② プレイヤー名（任意）',
+    playerNameTitleHost: '② あなたの名前（必須）',
     startGameBtn: 'ゲーム開始 → 1ターン目',
     createRoomBtn: 'ルームを作成する',
     roomCodeLabel: 'ルームコード',
@@ -516,6 +517,7 @@ const I18N = {
     displaySize: pct => `Size ${pct}%`,
     playerCountTitle: '① Number of players',
     playerNameTitle: '② Player names (optional)',
+    playerNameTitleHost: '② Your name (required)',
     startGameBtn: 'Start game → Turn 1',
     createRoomBtn: 'Create room',
     roomCodeLabel: 'Room code',
@@ -627,7 +629,7 @@ function applyStaticText(){
   document.getElementById('joinNameInput').placeholder = t('joinNamePlaceholder');
   updateZoomBtnLabel();
   document.getElementById('txt_playerCountTitle').textContent = t('playerCountTitle');
-  document.getElementById('txt_playerNameTitle').textContent = t('playerNameTitle');
+  document.getElementById('txt_playerNameTitle').textContent = t(currentMode === 'online-host' ? 'playerNameTitleHost' : 'playerNameTitle');
   document.getElementById('txt_roomCodeLabel').textContent = t('roomCodeLabel');
   document.getElementById('txt_shareHint').textContent = t('shareHint');
   document.getElementById('waitingForHostHint').textContent = t('waitingHostHint');
@@ -843,6 +845,8 @@ let isOnline = false, isHost = false, roomCode = null, myPlayerId = null, roomRe
 
 function setMode(m){
   currentMode = m;
+  // ホストは名前が必須なので見出しを切り替える（ローカルは任意のまま）
+  document.getElementById('txt_playerNameTitle').textContent = t(m === 'online-host' ? 'playerNameTitleHost' : 'playerNameTitle');
   document.getElementById('hostSetupBox').classList.toggle('hidden', m==='online-join');
   document.getElementById('onlineJoinBox').classList.toggle('hidden', m!=='online-join');
   document.getElementById('roomCodeDisplay').classList.add('hidden');
