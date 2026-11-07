@@ -148,6 +148,8 @@
   .mode-img.car{height:42px;}
   /* Bahnschrift はWindowsに入っているフォント。入っていない端末（Mac・iPhone・Androidなど）では形の近い Barlow で表示する */
   .mode-label{font-family:'Bahnschrift','Barlow',sans-serif; font-size:18px; font-weight:600; color:#111; letter-spacing:0.01em; line-height:1.1; margin-top:4px;}
+  /* ベトナム語は声調記号があるため、ベトナム語に対応した Barlow を優先し、少し小さめにする */
+  .mode-label.vi{font-family:'Barlow',sans-serif; font-size:15px; white-space:nowrap;}
   .modebtn{transition:background 0.15s, border-color 0.15s, box-shadow 0.15s;}
   .modebtn.car.sel{background:#FFEDE5; border-color:#FA4400; box-shadow:0 0 0 2px #FA4400 inset;}
   .modebtn.train.sel{background:#E6F2E9; border-color:#116927; box-shadow:0 0 0 2px #116927 inset;}
@@ -231,6 +233,7 @@
     <div style="display:flex; gap:8px;">
       <button class="ghost" id="zoomToggleBtn" style="padding:8px 16px; font-size:13px;" onclick="cycleZoom()">表示 100%</button>
       <button class="ghost" id="langToggleBtn" style="padding:8px 16px; font-size:13px;" onclick="toggleLang()">EN</button>
+      <button class="ghost" id="langViBtn" style="padding:8px 16px; font-size:13px;" onclick="setLangVi()">Tiếng Việt</button>
     </div>
   </div>
 
@@ -455,10 +458,15 @@ const I18N = {
     waitingReflectionCount: n => `全員の振り返り待ち（${n.done}/${n.total}人）`,
     hostWillAdvance: 'ホストが次のターンへ進めるのを待っています…',
     modeWord: m => m==='C' ? '車' : '電車',
+    cardLabel: m => m==='C' ? 'Car' : 'Train',
     sqUnit: 'マス',
     positionLabel: '現在地',
     resultHeaderLocal: (period, carN, trainN, carAdv, trainAdv) => `結果：${period}／車 ${carN}人・電車 ${trainN}人（車 ${carAdv}マス／電車 ${trainAdv}マス）`,
     resultHeaderOnline: (period, carN, trainN, carAdvPart, trainAdvPart) => `結果：${period}／車 ${carN}人・電車 ${trainN}人${carAdvPart}${trainAdvPart}`,
+    carAdvPart: n => `（車 ${n}マス`,
+    trainAdvPart: n => `／電車 ${n}マス）`,
+    advOpen: '（',
+    advClose: '）',
     reflectFail: '失敗…',
     reflectSoso: 'まぁ、こんなものか',
     reflectSuccess: '成功！！',
@@ -562,10 +570,15 @@ const I18N = {
     waitingReflectionCount: n => `Waiting for everyone's reflection (${n.done}/${n.total})`,
     hostWillAdvance: 'Waiting for the host to advance to the next turn…',
     modeWord: m => m==='C' ? 'Car' : 'Train',
+    cardLabel: m => m==='C' ? 'Car' : 'Train',
     sqUnit: ' sq',
     positionLabel: 'Position',
     resultHeaderLocal: (period, carN, trainN, carAdv, trainAdv) => `Result: ${period} — Car: ${carN}, Train: ${trainN} (Car +${carAdv} sq / Train +${trainAdv} sq)`,
     resultHeaderOnline: (period, carN, trainN, carAdvPart, trainAdvPart) => `Result: ${period} — Car: ${carN}, Train: ${trainN}${carAdvPart}${trainAdvPart}`,
+    carAdvPart: n => ` (Car +${n} sq`,
+    trainAdvPart: n => ` / Train +${n} sq)`,
+    advOpen: ' (',
+    advClose: ')',
     reflectFail: 'Not great…',
     reflectSoso: 'Eh, it\'s fine',
     reflectSuccess: 'Success!!',
@@ -591,6 +604,118 @@ const I18N = {
     alert_newSessionFail: err => 'Failed to start a new session: ' + err,
     alert_missingPlayers: names => 'The following players have not chosen: ' + names,
     alert_needAllReflections: 'You cannot move to the next turn until everyone has chosen a reflection',
+  },
+  vi: {
+    pageTitle: 'Cờ cá ngựa giao thông trực tuyến',
+    appTitle: 'Cờ cá ngựa giao thông',
+    langToggleLabel: '日本語',
+    howToPlay: 'Cách chơi',
+    playerCount: 'Chơi với 4–8 người',
+    rule1title: '① Mỗi lượt, hãy chọn phương tiện di chuyển',
+    rule1body: (car, train) => `${car} Ô TÔ hoặc ${train} TÀU ĐIỆN`,
+    rule2title: '② Tiến lên theo lựa chọn của bạn',
+    rule2train: icon => `${icon} Tàu điện: luôn tiến 4 ô`,
+    rule2car: icon => `${icon} Ô tô: từ 0 đến 10 ô (thay đổi theo thời điểm trong ngày và mức độ ùn tắc — càng nhiều người chọn ô tô thì mọi người càng tiến được ít hơn)`,
+    rule3title: '③ Chơi 8 lượt',
+    rule3body: 'Người tiến được xa nhất sau 8 lượt sẽ chiến thắng!',
+    beginBtn: 'Bắt đầu →',
+    modeLocal: 'Chơi trên một thiết bị',
+    modeHost: 'Tạo phòng trực tuyến (chủ phòng)',
+    modeJoin: 'Tham gia phòng trực tuyến',
+    enterCode: 'Nhập mã phòng và tên của bạn',
+    codePlaceholder: 'Ví dụ: 1234',
+    searchCode: 'Tham gia',
+    joinNamePlaceholder: 'Tên của bạn (bắt buộc)',
+    alert_nameRequired: 'Vui lòng nhập tên của bạn',
+    confirmLeaveRoom: 'Bạn đang ở trong phòng. Nếu rời khỏi trang này, bạn có thể bị đưa ra khỏi phòng. Bạn có thật sự muốn quay lại không?',
+    alert_roomNotFound: 'Không tìm thấy phòng với mã này. Vui lòng kiểm tra lại mã',
+    alert_roomFull: 'Phòng này đã đủ người',
+    joinedAs: name => `Bạn đã tham gia với tên "${name}"`,
+    finalTurn: 'LƯỢT CUỐI',
+    confirmLeave: 'Trò chơi đang diễn ra. Nếu rời khỏi trang này, bạn có thể không tiếp tục được. Bạn có thật sự muốn quay lại không?',
+    winnerLabel: 'Hạng 1',
+    displaySize: pct => `Cỡ hiển thị ${pct}%`,
+    playerCountTitle: '① Số người chơi',
+    playerNameTitle: '② Tên người chơi (không bắt buộc)',
+    playerNameTitleHost: '② Tên của bạn (bắt buộc)',
+    startGameBtn: 'Bắt đầu trò chơi → Lượt 1',
+    createRoomBtn: 'Tạo phòng',
+    roomCodeLabel: 'Mã phòng',
+    shareHint: 'Hãy chia sẻ đường dẫn và mã này cho những người chơi khác, rồi nhờ họ tham gia qua mục "Tham gia phòng trực tuyến"',
+    hostBeginBtnReady: 'Bắt đầu trò chơi',
+    waitingJoinCount: n => `Đang chờ mọi người tham gia (${n.connected}/${n.total})`,
+    waitingHostHint: 'Khi chủ phòng nhấn "Bắt đầu trò chơi", màn hình trò chơi của mọi người sẽ bắt đầu',
+    choiceTitle: 'Lựa chọn của lượt này',
+    localHint: 'Khi mọi người đã chọn xong, hãy nhấn "Xác nhận lượt này"',
+    confirmTurnBtn: 'Xác nhận lượt này →',
+    resetChoicesBtn: 'Chọn lại',
+    waitingChoiceCount: n => `Đang chờ mọi người chọn (${n.done}/${n.total})`,
+    resultTitle: 'Kết quả',
+    reflectionPrompt: 'Nhìn lại lựa chọn lần này...',
+    nextTurnBtn: 'Lượt tiếp theo →',
+    viewFinalBtn: 'Xem kết quả cuối cùng →',
+    endSubtitle: 'Hãy cùng nhìn lại lựa chọn của bạn đã ảnh hưởng thế nào đến ùn tắc, CO₂ và chi phí',
+    chartCo2: 'Tổng lượng CO₂ cuối cùng (kg)',
+    chartMoney: 'Tổng chi phí cuối cùng (¥)',
+    chartSocial: 'Tổng lượng CO₂ phát thải của lượt chơi này (cả nhóm)',
+    downloadBtn: 'Tải xuống Excel (tất cả các lượt chơi)',
+    setupReplayBtn: 'Thay đổi người chơi và chơi lại',
+    endTitle: (turns, sess) => `Hoàn thành ${turns} lượt — Kết quả (Lượt chơi ${sess})`,
+    replayLocal: sess => `Chơi lại (được ghi lại là Lượt chơi ${sess})`,
+    replayHost: sess => `[Chủ phòng] Chơi lại (Lượt chơi ${sess})`,
+    replayWaitHost: 'Đang chờ chủ phòng bắt đầu ván mới',
+    playerNamePlaceholder: i => `Người chơi ${i}`,
+    hostNamePlaceholder: 'Tên của bạn (chủ phòng, bắt buộc)',
+    hostNameHint: 'Những người tham gia khác sẽ tự nhập tên khi vào phòng',
+    notJoined: '(chưa tham gia)',
+    you: '(Bạn)',
+    selectedMark: 'Đã chọn ✓',
+    choosingMark: 'Đang chọn…',
+    notJoinedMark: 'Chưa tham gia',
+    everyoneReady: 'Mọi người đã sẵn sàng. Bạn có thể xác nhận.',
+    waitEveryoneChoose: 'Nút này sẽ không dùng được cho đến khi mọi người chọn xong',
+    hostWillConfirm: 'Lượt tiếp theo sẽ bắt đầu khi chủ phòng nhấn "Xác nhận lượt này"',
+    hostConfirmBtn: n => `[Chủ phòng] Xác nhận lượt này và tiếp tục →`,
+    hostWaitingChoiceCount: n => `[Chủ phòng] Đang chờ mọi người chọn (${n.done}/${n.total})`,
+    hostViewFinalBtn: '[Chủ phòng] Xem kết quả cuối cùng →',
+    hostNextTurnBtn: '[Chủ phòng] Lượt tiếp theo →',
+    waitingReflectionCount: n => `Đang chờ mọi người nhìn lại lựa chọn (${n.done}/${n.total})`,
+    hostWillAdvance: 'Đang chờ chủ phòng chuyển sang lượt tiếp theo…',
+    modeWord: m => m==='C' ? 'Ô tô' : 'Tàu điện',
+    cardLabel: m => m==='C' ? 'Ô tô' : 'Tàu điện',
+    sqUnit: ' ô',
+    positionLabel: 'Vị trí',
+    resultHeaderLocal: (period, carN, trainN, carAdv, trainAdv) => `Kết quả: ${period} — Ô tô: ${carN} người, Tàu điện: ${trainN} người (Ô tô +${carAdv} ô / Tàu điện +${trainAdv} ô)`,
+    resultHeaderOnline: (period, carN, trainN, carAdvPart, trainAdvPart) => `Kết quả: ${period} — Ô tô: ${carN} người, Tàu điện: ${trainN} người${carAdvPart}${trainAdvPart}`,
+    carAdvPart: n => ` (Ô tô +${n} ô`,
+    trainAdvPart: n => ` / Tàu điện +${n} ô)`,
+    advOpen: ' (',
+    advClose: ')',
+    reflectFail: 'Thất bại…',
+    reflectSoso: 'Cũng tạm được',
+    reflectSuccess: 'Thành công!!',
+    reached: 'Đã đến',
+    sq: ' ô',
+    co2Money: (co2, money) => `CO₂ ${co2}kg / Chi phí ¥${money}`,
+    socialTotalLabel: 'Tổng của cả nhóm',
+    socialTotalSub: (n, turns) => `Tổng lượng CO₂ của ${n} người × ${turns} lượt`,
+    unitYen: ' yên',
+    unitKg: ' kg',
+    periodNames: {'朝':'Buổi sáng','昼':'Buổi trưa','夕方':'Buổi chiều tối','夜':'Ban đêm'},
+    alert_firebaseFail: 'Không tải được chức năng trực tuyến. Vui lòng kiểm tra kết nối Internet và tải lại trang.',
+    alert_createRoomFail: err => 'Không tạo được phòng: ' + err,
+    alert_joinFail: err => 'Không tham gia được: ' + err,
+    alert_notAllJoined: 'Chưa phải tất cả mọi người đã tham gia. Chỉ có thể bắt đầu khi mọi người đã tham gia.',
+    alert_startNotifyFail: err => 'Không thông báo được việc bắt đầu trò chơi: ' + err,
+    alert_notAllReflected: 'Vẫn còn người chưa nhìn lại lựa chọn',
+    alert_advanceFail: err => 'Không chuyển được sang lượt tiếp theo: ' + err,
+    alert_sendChoiceFail: err => 'Không gửi được lựa chọn của bạn: ' + err,
+    alert_notAllChosen: 'Vẫn còn người chưa chọn',
+    alert_updateFail: err => 'Không cập nhật được: ' + err,
+    alert_hostOnly: 'Chỉ chủ phòng mới có thể thực hiện thao tác này',
+    alert_newSessionFail: err => 'Không bắt đầu được lượt chơi mới: ' + err,
+    alert_missingPlayers: names => 'Những người chơi sau chưa chọn: ' + names,
+    alert_needAllReflections: 'Không thể chuyển sang lượt tiếp theo cho đến khi mọi người đã nhìn lại lựa chọn',
   }
 };
 
@@ -610,6 +735,9 @@ function applyStaticText(){
   document.getElementById('pageTitleEl').textContent = t('pageTitle');
   document.getElementById('appTitleEl').textContent = t('appTitle');
   document.getElementById('langToggleBtn').textContent = t('langToggleLabel');
+  // ベトナム語表示中はベトナム語ボタンを選択中の見た目にする
+  const viBtn = document.getElementById('langViBtn');
+  if(viBtn){ viBtn.style.background = (LANG==='vi') ? '#3F4348' : ''; viBtn.style.color = (LANG==='vi') ? '#fff' : ''; }
   document.getElementById('txt_howToPlay').textContent = t('howToPlay');
   document.getElementById('txt_playerCount').textContent = t('playerCount');
   document.getElementById('txt_rule1title').textContent = t('rule1title');
@@ -697,8 +825,15 @@ function cycleZoom(){
   document.documentElement.style.zoom = (zoomPct / 100);
 })();
 
+// 日本語⇔英語の切り替え（ベトナム語表示中に押すと日本語に戻る）
 function toggleLang(){
   LANG = (LANG === 'ja') ? 'en' : 'ja';
+  document.getElementById('htmlRoot').lang = LANG;
+  applyStaticText();
+}
+// ベトナム語ボタン（EN/日本語ボタンの隣）
+function setLangVi(){
+  LANG = 'vi';
   document.getElementById('htmlRoot').lang = LANG;
   applyStaticText();
 }
@@ -1218,11 +1353,11 @@ function modeButtonsHtml(playerId, chosen){
   return `<div class="modebtns">
       <button class="modebtn car ${chosen==='C'?'sel':''}" onclick="pick(${playerId},'C')" id="btnC${playerId}">
         <span class="mode-icon"><img src="${MODE_IMG.C}" alt="" class="mode-img car"></span>
-        <span class="mode-label">Car</span>
+        <span class="mode-label${LANG==='vi'?' vi':''}">${t('cardLabel')('C')}</span>
       </button>
       <button class="modebtn train ${chosen==='T'?'sel':''}" onclick="pick(${playerId},'T')" id="btnT${playerId}">
         <span class="mode-icon"><img src="${MODE_IMG.T}" alt="" class="mode-img train"></span>
-        <span class="mode-label">Train</span>
+        <span class="mode-label${LANG==='vi'?' vi':''}">${t('cardLabel')('T')}</span>
       </button>
     </div>`;
 }
@@ -1350,8 +1485,8 @@ function renderTurnResults(p){
   if(isOnline){
     const carAdv = tl.find(l=>l.mode==='C');
     const trainAdv = tl.find(l=>l.mode==='T');
-    const carPart = carAdv ? (LANG==='ja' ? `（車 ${carAdv.advance}マス` : ` (Car +${carAdv.advance} sq`) : (LANG==='ja' ? '（' : ' (');
-    const trainPart = trainAdv ? (LANG==='ja' ? `／電車 ${trainAdv.advance}マス）` : ` / Train +${trainAdv.advance} sq)`) : (LANG==='ja' ? '）' : ')');
+    const carPart = carAdv ? t('carAdvPart')(carAdv.advance) : t('advOpen');
+    const trainPart = trainAdv ? t('trainAdvPart')(trainAdv.advance) : t('advClose');
     document.getElementById('resultTitle').textContent = t('resultHeaderOnline')(periodDisplay(p.name), carCount, trainCount, carPart, trainPart);
   } else {
     const carAdvance = carAdvanceFor(p.name, players.length, carCount);
